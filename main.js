@@ -14,7 +14,7 @@ var input_wait_c = yaju1919.addInputNumber(h,{
     title: "文字間wait時間[ms]",
     int: true,
     max: 1000,
-    value: 300,
+    value: 500,
     min: 0,
     save: "input_wait_c"
 });
@@ -48,7 +48,7 @@ t:${wait_c},
             }
             s += `
 #CH_SP
-n:${dic[v]},tx:${x},ty:${y},l:0,
+n:${dic[v] ? dic[v] : 45},tx:${x},ty:${y},l:0,
 #ED
 #MV_PA
 tx:${x},ty:${y},t:0,n:1,s:1,
@@ -66,7 +66,7 @@ t:${wait_n},
 }
 function judge(str,dic_keys){
     var s = "";
-    str.replace(/\n/g,'').split('').forEach(v=>{
+    str.replace(/[\n\r\s　]/g,'').split('').forEach(v=>{
         if(dic_keys.indexOf(v) === -1) s += v;
     });
     if(s) {
