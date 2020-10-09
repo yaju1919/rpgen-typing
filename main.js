@@ -14,7 +14,7 @@ var input_wait_c = yaju1919.addInputNumber(h,{
     title: "文字間wait時間[ms]",
     int: true,
     max: 1000,
-    value: 100,
+    value: 300,
     min: 0,
     save: "input_wait_c"
 });
@@ -22,7 +22,7 @@ var input_wait_n = yaju1919.addInputNumber(h,{
     title: "改行間wait時間[ms]",
     int: true,
     max: 5000,
-    value: 500,
+    value: 1000,
     min: 0,
     save: "input_wait_n"
 });
@@ -48,7 +48,7 @@ t:${wait_c},
             }
             s += `
 #CH_SP
-n:810,tx:${x},ty:${y},l:0,
+n:${dic[v]},tx:${x},ty:${y},l:0,
 #ED
 #MV_PA
 tx:${x},ty:${y},t:0,n:1,s:1,
@@ -60,6 +60,7 @@ tx:${x},ty:${y},t:0,n:1,s:1,
 t:${wait_n},
 #ED`;
         y++;
+        x = 33;
     });
     outputBookmarklet(s);
 }
