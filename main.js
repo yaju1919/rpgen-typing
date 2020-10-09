@@ -14,7 +14,7 @@ var input_wait_c = yaju1919.addInputNumber(h,{
     title: "文字間wait時間[ms]",
     int: true,
     max: 5000,
-    value: 1000,
+    value: 500,
     min: 0,
     save: "input_wait_c"
 });
@@ -40,7 +40,7 @@ function main(){
         y = 33;
     str.split("\n").forEach((line)=>{
         line.split('').map((v,i)=>{
-            if(i && sute_gana.indexOf(v) !== -1){
+            if(i && sute_gana.indexOf(v) === -1){
                 s += `
 #WAIT
 t:${wait_c},
