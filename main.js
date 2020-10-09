@@ -5,6 +5,7 @@ var h = $("<div>").appendTo($("body")).css({
 $("<h1>",{text:"RPGENのタイピングマップメーカー"}).appendTo(h);
 $("<div>",{text:"歌詞などをタイピングマップ化"}).appendTo(h);
 var input_str = yaju1919.addInputText(h,{
+    textarea: true,
     title: "入力欄",
     placeholder: "ひらがな、カタカナ、英語、数字、記号のみ使用可能"
 });
@@ -39,12 +40,12 @@ function main(){
     str.split("\n").forEach((line)=>{
         line.split('').map((v,i)=>{
             if(i && sute_gana.indexOf(v) !== -1){
-            s += `
+                s += `
 #WAIT
 t:${wait_c},
 #ED`;
-        }
-        s += `
+            }
+            s += `
 #CH_SP
 n:810,tx:${x},ty:${y},l:0,
 #ED
@@ -59,6 +60,7 @@ t:${wait_n},
 #ED`;
         y++;
     });
+    outputBookmarklet(s);
 }
 function judge(str,dic_keys){
     var s = "";
@@ -97,10 +99,10 @@ ${s}
 #PHEND0
 #END`
     var file = LZString.compressToEncodedURIComponent(result);
-        var str = 'avascript:(function(){var map="' + file + '";(' + toStr(write) + ')();})();';
-        yaju1919.addInputText(output.empty(),{
-            value: str,
-            textarea: true,
-            readonly: true
-        });
+    var str = 'avascript:(function(){var map="' + file + '";(' + toStr(write) + ')();})();';
+    yaju1919.addInputText(output.empty(),{
+        value: str,
+        textarea: true,
+        readonly: true
+    });
 }
