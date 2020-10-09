@@ -2,7 +2,7 @@ var rpgenMap = `#HERO
 0,15#END
 
 #BGM
-https://www.youtube.com/watch?v=tp9eRncVbcY#END
+https://www.youtube.com/watch?v=ezME0Wy0OAE#END
 
 #BGIMG
 http://i.imgur.com/qiN1und.jpg#END
