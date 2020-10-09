@@ -13,8 +13,8 @@ var input_str = yaju1919.addInputText(h,{
 var input_wait_c = yaju1919.addInputNumber(h,{
     title: "文字間wait時間[ms]",
     int: true,
-    max: 1000,
-    value: 500,
+    max: 5000,
+    value: 1000,
     min: 0,
     save: "input_wait_c"
 });
