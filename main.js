@@ -14,7 +14,7 @@ var input_wait_c = yaju1919.addInputNumber(h,{
     max: 1000,
     value: 100,
     min: 0,
-    save: "input_wait"
+    save: "input_wait_c"
 });
 var input_wait_n = yaju1919.addInputNumber(h,{
     title: "改行間wait時間[ms]",
@@ -22,7 +22,7 @@ var input_wait_n = yaju1919.addInputNumber(h,{
     max: 5000,
     value: 500,
     min: 0,
-    save: "input_wait"
+    save: "input_wait_n"
 });
 $("<button>").appendTo(h).text("マップ作成").on("click",main);
 var output = $("<div>").appendTo(h);
