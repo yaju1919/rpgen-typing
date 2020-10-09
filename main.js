@@ -7,7 +7,8 @@ $("<div>",{text:"歌詞などをタイピングマップ化"}).appendTo(h);
 var input_str = yaju1919.addInputText(h,{
     textarea: true,
     title: "入力欄",
-    placeholder: "ひらがな、カタカナ、英語、数字、記号のみ使用可能",
+    placeholder: `ひらがな、カタカナ、英語、数字、記号のみ使用可能
+24@歌詞←その歌詞が始まったとき24秒にシークする`,
     save: "input_str"
 });
 var input_wait_c = yaju1919.addInputNumber(h,{
@@ -39,7 +40,13 @@ function main(){
         x = 33,
         y = 33;
     str.split("\n").forEach((line)=>{
-        line.split('').map((v,i)=>{
+        line.replace(/([0-9]+)@/,function(v){
+            s += `
+#SK_YB
+s:${v[1]},
+#ED`;
+            return '';
+        }).split('').map((v,i)=>{
             if(i && sute_gana.indexOf(v) === -1){
                 s += `
 #WAIT
@@ -66,7 +73,7 @@ t:${wait_n},
 }
 function judge(str,dic_keys){
     var s = "";
-    str.replace(/[\n\r\s　]/g,'').split('').forEach(v=>{
+    str.replace(/[\n\r\s　]|[0-9]+@/g,'').split('').forEach(v=>{
         if(dic_keys.indexOf(v) === -1) s += v;
     });
     if(s) {
