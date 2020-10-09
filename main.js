@@ -34,7 +34,7 @@ function main(){
         wait_c = input_wait_c(),
         wait_n = input_wait_n();
     var dic_keys = Object.keys(dic);
-    if(!judge(str,dic_keys)) return;
+    if(judge(str,dic_keys)) return;
     var s = "",
         x = 33,
         y = 33;
