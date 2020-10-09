@@ -7,7 +7,8 @@ $("<div>",{text:"歌詞などをタイピングマップ化"}).appendTo(h);
 var input_str = yaju1919.addInputText(h,{
     textarea: true,
     title: "入力欄",
-    placeholder: "ひらがな、カタカナ、英語、数字、記号のみ使用可能"
+    placeholder: "ひらがな、カタカナ、英語、数字、記号のみ使用可能",
+    save: "input_str"
 });
 var input_wait_c = yaju1919.addInputNumber(h,{
     title: "文字間wait時間[ms]",
@@ -33,7 +34,7 @@ function main(){
         wait_c = input_wait_c(),
         wait_n = input_wait_n();
     var dic_keys = Object.keys(dic);
-    if(judge(str,dic_keys)) return;
+    if(!judge(str,dic_keys)) return;
     var s = "",
         x = 33,
         y = 33;
