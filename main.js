@@ -31,6 +31,12 @@ var input_wait_n = yaju1919.addInputNumber(h,{
 $("<button>").appendTo(h).text("マップ作成").on("click",main);
 var output = $("<div>").appendTo(h);
 var sute_gana = "ぁぃぅぇぉゕゖっゃゅょゎァィゥェォヵヶッャュョヮ";
+function addWait(s){
+    return Number(s) === 0 ? '' : `
+#WAIT
+t:${s},
+#ED`;
+}
 function main(){
     var str = input_str(),
         wait_c = input_wait_c(),
@@ -42,10 +48,7 @@ function main(){
         y = 33;
     str.split("\n").forEach((line)=>{
         line.replace(/[0-9]+#/,function(v){
-            s += `
-#WAIT
-t:${v.slice(0,-1)},
-#ED`;
+            s += addWait(v.slice(0,-1));
             return '';
         }).replace(/[0-9]+@/,function(v){
             s += `
@@ -55,10 +58,7 @@ s:${v.slice(0,-1)},
             return '';
         }).split('').map((v,i)=>{
             if(i && sute_gana.indexOf(v) === -1){
-                s += `
-#WAIT
-t:${wait_c},
-#ED`;
+                s += addWait(wait_c);
             }
             s += `
 #CH_SP
@@ -69,10 +69,7 @@ tx:${x},ty:${y},t:0,n:1,s:1,
 #ED`;
             x++;
         });
-        s += `
-#WAIT
-t:${wait_n},
-#ED`;
+        s += addWait(wait_n);
         y++;
         x = 33;
     });
