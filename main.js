@@ -49,8 +49,7 @@ function loaded(sampleText){
     var input_str = yaju1919.addInputText(h,{
         textarea: true,
         title: "歌詞入力欄",
-        placeholder: `ひらがな、カタカナ、英語、数字、記号のみ使用可能
-810#歌詞←その歌詞が始まる直前に810ミリ秒停止する。
+        placeholder: `810#歌詞←その歌詞が始まる直前に810ミリ秒停止する。
 19@歌詞←その歌詞が始まったとき19秒にシークする。
 歌詞の中に挿入された#は1文字分waitする。`,
         value: sampleText,
@@ -91,11 +90,11 @@ t:${s},
             x = 33,
             y = 33;
         str.split("\n").forEach((line)=>{
-            line.replace(/^([0-9]+)?#/,function(v){
+            line.replace(/^([0-9]+)#/,function(v){
                 var n = Number(v.slice(0,-1));
                 if(n) s += addWait(n);
                 return '';
-            }).replace(/^([0-9]+)?@/,function(v){
+            }).replace(/^([0-9]+)@/,function(v){
                 var n = Number(v.slice(0,-1));
                 if(!n) return '';
                 s += `
