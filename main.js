@@ -38,14 +38,6 @@ function loaded(sampleText){
         }
         if(!m) $("<div>").appendTo(h_youtube).text("YouTubeの動画URLを入力してください。");
     }
-    var inputStartTime = yaju1919.addInputNumber(h,{
-        title: "歌詞の開始時間[ms]",
-        min: 0,
-        max: 99999,
-        value: 14000,
-        int: true,
-        save: "inputStartTime"
-    });
     var input_str = yaju1919.addInputText(h,{
         textarea: true,
         title: "歌詞入力欄",
@@ -188,9 +180,6 @@ s:0,
 t:500,
 #ED
 #RS_YB
-#ED
-#WAIT
-t:${inputStartTime()},
 #ED
 #PHEND0
 `);
