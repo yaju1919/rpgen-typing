@@ -1,4 +1,4 @@
-$.get("sample.txt",loaded);
+$.get("sample/184.txt",loaded);
 function loaded(sampleText){
 
     var h = $("<div>").appendTo($("body")).css({
@@ -103,18 +103,19 @@ s:${n},
 #ED`;
                 return '';
             }).split('').forEach((v,i)=>{
-                var waitFlag = v === '#';
-                if((i && sute_gana.indexOf(v) === -1) || waitFlag){
+                var id = dic[v],
+                    waitFlag = v === '#';
+                if(((i && sute_gana.indexOf(v) === -1) && id) || waitFlag){
                     s += addWait(wait_c);
                 }
                 if(waitFlag) return;
-                var id = dic[v];
+                else if(!id) return x++;
                 s += `
 #MV_PA
 tx:${x},ty:${y},t:0,n:1,s:1,
 #ED
 #CH_SP
-n:${id ? id : 45},tx:${x},ty:${y},l:0,
+n:${id},tx:${x},ty:${y},l:0,
 #ED`;
                 x++;
                 if(g_floor_ar.indexOf(id) === -1) g_floor_ar.push(id);
