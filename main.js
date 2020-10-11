@@ -110,11 +110,11 @@ s:${n},
                 if(waitFlag) return;
                 var id = dic[v];
                 s += `
-#CH_SP
-n:${id ? id : 45},tx:${x},ty:${y},l:0,
-#ED
 #MV_PA
 tx:${x},ty:${y},t:0,n:1,s:1,
+#ED
+#CH_SP
+n:${id ? id : 45},tx:${x},ty:${y},l:0,
 #ED`;
                 x++;
                 if(g_floor_ar.indexOf(id) === -1) g_floor_ar.push(id);
@@ -164,7 +164,7 @@ tx:${x},ty:${y},t:0,n:1,s:1,
 #EPOINT tx:0,ty:15,
 #PH0 tm:1,
 #CH_HM
-n:-45,i:0,
+n:A1469,i:0,
 #ED
 #WAIT
 t:500,
