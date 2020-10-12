@@ -11,11 +11,9 @@ function loaded(sampleText){
     $("<h1>",{text:"RPGENのタイピングマップメーカー"}).appendTo(h);
     $("<div>",{text:"歌詞などをタイピングマップ化"}).appendTo(h);
     var input_youtube = yaju1919.addInputText(h,{
-        title: "BGMに使うyoutubeのURLを入力",
-        value: "https://www.youtube.com/watch?v=d_T1StgldnM",
+        title: "YouTubeのテスト再生",
         change: testYouTube,
-        save: "input_youtube",
-        class: "input_youtube",
+        id: "input_youtube",
     });
     var h_youtube = $("<div>").appendTo(h);
     testYouTube();
@@ -50,27 +48,18 @@ function loaded(sampleText){
 歌詞の中に挿入された#は1文字分waitする。`,
         value: sampleText,
         save: "input_str",
-        class: "input_str"
+        class: "input_str",
+        change: function(v){
+            if(!input_str) return;
+            var bgm = v.split('\n').filter(v=>/^[a-zA-Z]+@/.test(v)).filter(v=>/^bgm@/.test(v))[0];
+            if(bgm) $("#input_youtube").val(bgm.slice(4));
+        }
     });
-    var input_wait_c = yaju1919.addInputNumber(h,{
-        title: "文字間wait時間[ms]",
-        int: true,
-        max: 5000,
-        value: 150,
-        min: 0,
-        save: "input_wait_c",
-        class: "input_wait_c"
+    $("<button>").appendTo(h).text("マップ作成").on("click",main).css({
+        color:"yellow",
+        backgroundColor:"red",
+        fontSize: "2em",
     });
-    var input_wait_n = yaju1919.addInputNumber(h,{
-        title: "改行間wait時間[ms]",
-        int: true,
-        max: 5000,
-        value: 150,
-        min: 0,
-        save: "input_wait_n",
-        class: "input_wait_n"
-    });
-    $("<button>").appendTo(h).text("マップ作成").on("click",main);
     var h_output = $("<div>").appendTo(h);
     function addErrorMsg(str){
         $("<div>").appendTo(h_output).text(str).css({
@@ -85,7 +74,10 @@ function loaded(sampleText){
 t:${s},
 #ED`;
     }
+    var g_wait_c, g_wait_n;
     function main(){
+        g_wait_c = 150;
+        g_wait_n = 150;
         h_output.empty();
         var str = input_str(),
             dic_keys = Object.keys(dic);;
@@ -117,7 +109,7 @@ s:${n},
                     a[i+1] = '\0';
                 }
                 if(((i && sute_gana.indexOf(v) === -1) && id) || waitFlag){
-                    s += addWait(input_wait_c());
+                    s += addWait(g_wait_c);
                 }
                 if(waitFlag) return;
                 else if(!id) return x++;
@@ -131,24 +123,16 @@ n:${id},tx:${x},ty:${y},l:0,
                 x++;
                 if(g_floor_ar.indexOf(id) === -1) g_floor_ar.push(id);
             });
-            s += addWait(input_wait_n());
+            s += addWait(g_wait_n);
             y++;
             x = 33;
         });
         outputBookmarklet(s);
-        changeValue(".input_str",[
-            "bgm@" + input_youtube(),
-            "c@" + input_wait_c(),
-            "n@" + input_wait_n()
-        ].map(v=>v+'\n').join('') + filterCmd(input_str()))
     }
-    function changeValue(selector,value){
-        $(selector).val(value).trigger("change");
-    };
-    var filterCmd = s => s.split('\n').filter(v=>!/^[a-zA-Z]+@/.test(v)).join('\n');
     function judge(str,dic_keys){
         var s = "";
-        filterCmd(str).replace(/[\n\r\s　#]|[0-9]+[@\$]/g,'').split('').forEach(v=>{
+        str.split('\n').filter(v=>!/^[a-zA-Z]+@/.test(v)).join('\n')
+            .replace(/[\n\r\s　#]|[0-9]+[@\$]/g,'').split('').forEach(v=>{
             if(dic_keys.indexOf(v) === -1) s += v;
         });
         if(s) {
@@ -166,13 +150,12 @@ n:${id},tx:${x},ty:${y},l:0,
         var ar = line.split('@');
         switch(ar[0]){
             case 'bgm':
-                changeValue(".input_youtube",ar[1]);
                 break;
             case 'c':
-                changeValue(".input_wait_c",ar[1]);
+                g_wait_c = ar[1];
                 break;
             case 'n':
-                changeValue(".input_wait_n",ar[1]);
+                g_wait_n = ar[1];
                 break;
             default:
                 addErrorMsg("該当のコマンドは存在しません。");
@@ -231,6 +214,9 @@ s:0,
 t:500,
 #ED
 #RS_YB
+#ED
+#CH_PH
+p:0,x:33,y:33,
 #ED
 #PHEND0
 `);
