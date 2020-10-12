@@ -46,18 +46,6 @@ function loaded(sampleText){
         }
         if(!m) $("<div>").appendTo(h_youtube).text("YouTubeの動画URLを入力してください。");
     }
-    $("<button>").appendTo(h).text("マップ作成").on("click",main).css({
-        color:"yellow",
-        backgroundColor:"red",
-        fontSize: "2em",
-    });
-    var h_output = $("<div>").appendTo(h);
-    function addErrorMsg(str){
-        $("<div>").appendTo(h_output).text(str).css({
-            color: "red",
-            backgroundColor: "pink"
-        });
-    }
     var input_str = yaju1919.addInputText(h,{
         textarea: true,
         title: "歌詞入力欄",
@@ -71,7 +59,7 @@ function loaded(sampleText){
     });
     $("<pre>").appendTo(h).text(`▼歌詞と同じ行では使えないコマンド
 
-bgm@[YouTubeのURL] ... BGMを[YouTubeのURL]に設定する。
+bgm@[YouTubeのURL] ... BGMを[YouTubeのURL]に設定する。1つしか適用されない。
 c@[ミリ秒] ... 文字間の待機時間を[ミリ秒]に設定する。
 n@[ミリ秒] ... 改行間の待機時間を[ミリ秒]に設定する。
 
@@ -83,6 +71,18 @@ n@[ミリ秒] ... 改行間の待機時間を[ミリ秒]に設定する。
 [秒]@ ... [秒]の位置に動画をシークする
 [ミリ秒]$ ... [ミリ秒]文字送りを止める
 # ... 1文字分何もしない`);
+    $("<button>").appendTo(h).text("マップ作成").on("click",main).css({
+        color:"yellow",
+        backgroundColor:"red",
+        fontSize: "2em",
+    });
+    var h_output = $("<div>").appendTo(h);
+    function addErrorMsg(str){
+        $("<div>").appendTo(h_output).text(str).css({
+            color: "red",
+            backgroundColor: "pink"
+        });
+    }
     var sute_gana = "ぁぃぅぇぉゕゖっゃゅょゎァィゥェォヵヶッャュョヮ";
     function addWait(s){
         return Number(s) === 0 ? '' : `
