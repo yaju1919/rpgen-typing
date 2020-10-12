@@ -11,11 +11,11 @@ function loaded(sampleText){
     $("<h1>",{text:"RPGENのタイピングマップメーカー"}).appendTo(h);
     $("<div>",{text:"歌詞などをタイピングマップ化"}).appendTo(h);
     var input_youtube = yaju1919.addInputText(h,{
-        class: "input_youtube",
         title: "BGMに使うyoutubeのURLを入力",
-        save: "input_youtube",
         value: "https://www.youtube.com/watch?v=d_T1StgldnM",
-        change: testYouTube
+        change: testYouTube,
+        save: "input_youtube",
+        class: "input_youtube",
     });
     var h_youtube = $("<div>").appendTo(h);
     testYouTube();
@@ -45,29 +45,30 @@ function loaded(sampleText){
     var input_str = yaju1919.addInputText(h,{
         textarea: true,
         title: "歌詞入力欄",
-        placeholder: `810#歌詞←その歌詞が始まる直前に810ミリ秒停止する。
+        placeholder: `810$歌詞←その歌詞が始まる直前に810ミリ秒停止する。
 19@歌詞←その歌詞が始まったとき19秒にシークする。
 歌詞の中に挿入された#は1文字分waitする。`,
         value: sampleText,
-        save: "input_str"
+        save: "input_str",
+        class: "input_str"
     });
     var input_wait_c = yaju1919.addInputNumber(h,{
-        class: "input_wait_c",
         title: "文字間wait時間[ms]",
         int: true,
         max: 5000,
         value: 150,
         min: 0,
-        save: "input_wait_c"
+        save: "input_wait_c",
+        class: "input_wait_c"
     });
     var input_wait_n = yaju1919.addInputNumber(h,{
-        class: "input_wait_n",
         title: "改行間wait時間[ms]",
         int: true,
         max: 5000,
         value: 150,
         min: 0,
-        save: "input_wait_n"
+        save: "input_wait_n",
+        class: "input_wait_n"
     });
     $("<button>").appendTo(h).text("マップ作成").on("click",main);
     var h_output = $("<div>").appendTo(h);
@@ -135,6 +136,11 @@ n:${id},tx:${x},ty:${y},l:0,
             x = 33;
         });
         outputBookmarklet(s);
+        changeValue(".input_str",[
+            "bgm@" + input_youtube(),
+            "c@" + input_wait_c(),
+            "n@" + input_wait_n()
+        ].join('\n') + input_str().replace(/[a-zA-Z]+@.+\n/,''))
     }
     function changeValue(selector,value){
         $(selector).val(value).trigger("change");
