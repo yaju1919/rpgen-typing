@@ -140,7 +140,7 @@ n:${id},tx:${x},ty:${y},l:0,
             "bgm@" + input_youtube(),
             "c@" + input_wait_c(),
             "n@" + input_wait_n()
-        ].join('\n') + input_str().replace(/[a-zA-Z]+@.+\n/,''))
+        ].map(v=>v+'\n').join('') + input_str().replace(/[a-zA-Z]+@.+\n/,''))
     }
     function changeValue(selector,value){
         $(selector).val(value).trigger("change");
