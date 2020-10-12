@@ -140,14 +140,14 @@ n:${id},tx:${x},ty:${y},l:0,
             "bgm@" + input_youtube(),
             "c@" + input_wait_c(),
             "n@" + input_wait_n()
-        ].map(v=>v+'\n').join('') + input_str().replace(/[a-zA-Z]+@.+\n/,''))
+        ].map(v=>v+'\n').join('') + input_str().replace(/[a-zA-Z]+@.+$/,'').trim())
     }
     function changeValue(selector,value){
         $(selector).val(value).trigger("change");
     };
     function judge(str,dic_keys){
         var s = "";
-        str.replace(/[\n\r\s　]|[0-9]+[@\$]|[a-zA-Z]+@.+\n|#/g,'').split('').forEach(v=>{
+        str.replace(/[\n\r\s　]|[0-9]+[@\$]|[a-zA-Z]+@.+$|#/g,'').split('').forEach(v=>{
             if(dic_keys.indexOf(v) === -1) s += v;
         });
         if(s) {
