@@ -147,7 +147,7 @@ n:${id},tx:${x},ty:${y},l:0,
     };
     function judge(str,dic_keys){
         var s = "";
-        str.replace(/[\n\r\s　]|[0-9]+[@\$]|[a-zA-Z]+@.+$|#/g,'').split('').forEach(v=>{
+        str.replace(/[0-9]+[@\$]|[a-zA-Z]+@.+$|#/g,'').replace(/[\n\r\s　]/g,'').split('').forEach(v=>{
             if(dic_keys.indexOf(v) === -1) s += v;
         });
         if(s) {
