@@ -59,12 +59,10 @@ function loaded(sampleText){
         save: "input_str",
         class: "input_str",
         change: function(v){
-            if(!input_str) return;
             var bgm = v.split('\n').filter(v=>/^[a-zA-Z]+@/.test(v)).filter(v=>/^bgm@/.test(v))[0];
-            if(bgm) $("#input_youtube").val(bgm.slice(4));
+            if(bgm) $("#input_youtube").val(bgm.slice(4)).trigger("change");
         }
     });
-    $("textarea").trigger("change");
     $("<pre>").appendTo(h).text(`▼歌詞と同じ行では使えないコマンド
 
 bgm@[YouTubeのURL] ... BGMを[YouTubeのURL]に設定する。
