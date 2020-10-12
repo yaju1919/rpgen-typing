@@ -3,13 +3,12 @@ var $ = window.$,
     LZString = window.LZString;
 $.get("sample/184.txt",loaded);
 var dict = {};
-["standard.txt"].forEach(url=>{
-    $.get("dict/"+url,r=>{
-        r.split('\n').map(v=>v.split(' ').forEach(ar=>{
-            dict[ar[1]] = ar[0];
-        }));
-    });
-});
+[
+    "standard.txt",
+].forEach(url=>$.get("dict/"+url,r=>r.split('\n').forEach(v=>{
+    var ar = v.split(' ');
+    dict[ar[1]] = ar[0];
+})));
 function loaded(sampleText){
     var h = $("<div>").appendTo($("body")).css({
         "text-align": "center",
