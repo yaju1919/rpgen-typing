@@ -142,7 +142,7 @@ n:${id},tx:${x},ty:${y},l:0,
             y++;
             x = 33;
         });
-        outputBookmarklet(s);
+        outputBookmarklet(s,y);
     }
     function judge(str,dict_keys){
         var s = "";
@@ -196,12 +196,12 @@ n:${id},tx:${x},ty:${y},l:0,
         });
     }
     var g_floor_ar = [];
-    function outputBookmarklet(s){
+    function outputBookmarklet(s,y){
         var ar = [];
         ar.push("#HERO\n0,15");
         ar.push("#BGM\n");
         ar.push("#BGIMG\nhttps://i.imgur.com/TCdBukE.png");
-        ar.push("#FLOOR\n" + g_floor_ar.join(' ') + '\n'.repeat(15) + "45C\n" + '\n'.repeat(17) + ' '.repeat(33) + "45C" + '\n'.repeat(45) + "45");
+        ar.push("#FLOOR\n" + g_floor_ar.join(' ') + '\n'.repeat(15) + "45C\n" + '\n'.repeat(17) + ' '.repeat(33) + "45C" + '\n'.repeat(y - 33 + 45) + "45");
         ar.push(`
 #EPOINT tx:0,ty:15,
 #PH0 tm:1,
