@@ -1,6 +1,9 @@
+var $ = window.$,
+    yaju1919 = window.yaju1919,
+    dic = window.dic,
+    LZString = window.LZString;
 $.get("sample/184.txt",loaded);
 function loaded(sampleText){
-
     var h = $("<div>").appendTo($("body")).css({
         "text-align": "center",
         padding: "1em"
@@ -8,6 +11,7 @@ function loaded(sampleText){
     $("<h1>",{text:"RPGENのタイピングマップメーカー"}).appendTo(h);
     $("<div>",{text:"歌詞などをタイピングマップ化"}).appendTo(h);
     var input_youtube = yaju1919.addInputText(h,{
+        class: "input_youtube",
         title: "BGMに使うyoutubeのURLを入力",
         save: "input_youtube",
         value: "https://www.youtube.com/watch?v=d_T1StgldnM",
@@ -48,6 +52,7 @@ function loaded(sampleText){
         save: "input_str"
     });
     var input_wait_c = yaju1919.addInputNumber(h,{
+        class: "input_wait_c",
         title: "文字間wait時間[ms]",
         int: true,
         max: 5000,
@@ -56,6 +61,7 @@ function loaded(sampleText){
         save: "input_wait_c"
     });
     var input_wait_n = yaju1919.addInputNumber(h,{
+        class: "input_wait_n",
         title: "改行間wait時間[ms]",
         int: true,
         max: 5000,
@@ -64,7 +70,13 @@ function loaded(sampleText){
         save: "input_wait_n"
     });
     $("<button>").appendTo(h).text("マップ作成").on("click",main);
-    var output = $("<div>").appendTo(h);
+    var h_output = $("<div>").appendTo(h);
+    function addErrorMsg(str){
+        $("<div>").appendTo(h_output).text(str).css({
+            color: "red",
+            backgroundColor: "pink"
+        });
+    }
     var sute_gana = "ぁぃぅぇぉゕゖっゃゅょゎァィゥェォヵヶッャュョヮ";
     function addWait(s){
         return Number(s) === 0 ? '' : `
@@ -73,20 +85,21 @@ t:${s},
 #ED`;
     }
     function main(){
+        h_output.empty();
         var str = input_str(),
-            wait_c = input_wait_c(),
-            wait_n = input_wait_n();
-        var dic_keys = Object.keys(dic);
+            dic_keys = Object.keys(dic);;
         if(judge(str,dic_keys)) return;
         var s = "",
             x = 33,
             y = 33;
         str.split("\n").forEach((line)=>{
-            line.replace(/^([0-9]+)#/,function(v){
+            if(line === '') return;
+            if(analysisCmd(line)) return;
+            line.replace(/^[0-9]+\$/,function(v){
                 var n = Number(v.slice(0,-1));
                 if(n) s += addWait(n);
                 return '';
-            }).replace(/^([0-9]+)@/,function(v){
+            }).replace(/^[0-9]+@/,function(v){
                 var n = Number(v.slice(0,-1));
                 if(!n) return '';
                 s += `
@@ -94,11 +107,16 @@ t:${s},
 s:${n},
 #ED`;
                 return '';
-            }).split('').forEach((v,i)=>{
+            }).split('').forEach((v,i,a)=>{
+                if(v === '\0') return;
                 var id = dic[v],
-                    waitFlag = v === '#';
+                    waitFlag = v === '#' && (i ? a[i-1] !== '\\' : true);
+                if(v === '\\'){
+                    if(v !== a[i+1]) return;
+                    a[i+1] = '\0';
+                }
                 if(((i && sute_gana.indexOf(v) === -1) && id) || waitFlag){
-                    s += addWait(wait_c);
+                    s += addWait(input_wait_c());
                 }
                 if(waitFlag) return;
                 else if(!id) return x++;
@@ -112,19 +130,23 @@ n:${id},tx:${x},ty:${y},l:0,
                 x++;
                 if(g_floor_ar.indexOf(id) === -1) g_floor_ar.push(id);
             });
-            s += addWait(wait_n);
+            s += addWait(input_wait_n());
             y++;
             x = 33;
         });
         outputBookmarklet(s);
     }
+    function changeValue(selector,value){
+        $(selector).val(value).trigger("change");
+    };
     function judge(str,dic_keys){
         var s = "";
-        str.replace(/[\n\r\s　]|[0-9]+[#@]|#/g,'').split('').forEach(v=>{
+        str.replace(/[\n\r\s　]|[0-9]+[@\$]|[a-zA-Z]+@.+\n|#/g,'').split('').forEach(v=>{
             if(dic_keys.indexOf(v) === -1) s += v;
         });
         if(s) {
-            yaju1919.addInputText(output.empty(),{
+            addErrorMsg("使えない文字があります。");
+            yaju1919.addInputText(h_output,{
                 title: "使えない文字",
                 value: s,
                 readonly: true
@@ -132,6 +154,28 @@ n:${id},tx:${x},ty:${y},l:0,
         }
         return s;
     }
+    function analysisCmd(line){ // コマンド
+        if(!/^[^0-9\\]+@/.test(line)) return false;
+        var ar = line.split('@');
+        switch(ar[0]){
+            case 'bgm':
+                changeValue(".input_youtube",ar[1]);
+                break;
+            case 'c':
+                changeValue(".input_wait_c",ar[1]);
+                break;
+            case 'n':
+                changeValue(".input_wait_n",ar[1]);
+                break;
+            default:
+                addErrorMsg("該当のコマンドは存在しません。");
+                addErrorMsg("普通の文字として扱うなら前に\\を追加してエスケープしてください。");
+                addErrorMsg(line);
+                break;
+        }
+        return true;
+    }
+    //----------------------------------------------------------------------
     function toStr(func){ // 関数を文字列化
         return String(func).replace(/\/\/.*\n/g,'');
     }
@@ -191,7 +235,7 @@ ${s}
 `);
         var file = LZString.compressToEncodedURIComponent(ar.map(v=>v+"#END").join('\n\n'));
         var str = 'avascript:(function(){var map="' + file + '";(' + toStr(write) + ')();})();';
-        yaju1919.addInputText(output.empty(),{
+        yaju1919.addInputText(h_output,{
             value: str,
             textarea: true,
             readonly: true
