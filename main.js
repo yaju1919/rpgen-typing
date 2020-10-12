@@ -40,6 +40,11 @@ function loaded(sampleText){
         }
         if(!m) $("<div>").appendTo(h_youtube).text("YouTubeの動画URLを入力してください。");
     }
+    $("<button>").appendTo(h).text("マップ作成").on("click",main).css({
+        color:"yellow",
+        backgroundColor:"red",
+        fontSize: "2em",
+    });
     var input_str = yaju1919.addInputText(h,{
         textarea: true,
         title: "歌詞入力欄",
@@ -55,11 +60,7 @@ function loaded(sampleText){
             if(bgm) $("#input_youtube").val(bgm.slice(4));
         }
     });
-    $("<button>").appendTo(h).text("マップ作成").on("click",main).css({
-        color:"yellow",
-        backgroundColor:"red",
-        fontSize: "2em",
-    });
+    $("textarea").trigger("change");
     var h_output = $("<div>").appendTo(h);
     function addErrorMsg(str){
         $("<div>").appendTo(h_output).text(str).css({
