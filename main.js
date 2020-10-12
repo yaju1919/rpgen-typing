@@ -1,8 +1,15 @@
 var $ = window.$,
     yaju1919 = window.yaju1919,
-    dic = window.dic,
     LZString = window.LZString;
 $.get("sample/184.txt",loaded);
+var dict = {};
+["standard.txt"].forEach(url=>{
+    $.get("dict/"+url,r=>{
+        r.split('\n').map(v=>v.split(' ').forEach(ar=>{
+            dict[ar[1]] = ar[0];
+        }));
+    });
+});
 function loaded(sampleText){
     var h = $("<div>").appendTo($("body")).css({
         "text-align": "center",
@@ -86,12 +93,11 @@ t:${s},
     }
     var g_wait_c, g_wait_n;
     function main(){
-        g_wait_c = 0;
-        g_wait_n = 0;
+        g_wait_c = g_wait_n = 0;
         h_output.empty();
         var str = input_str(),
-            dic_keys = Object.keys(dic);;
-        if(judge(str,dic_keys)) return;
+            dict_keys = Object.keys(dict);;
+        if(judge(str,dict_keys)) return;
         var s = "",
             x = 33,
             y = 33;
@@ -112,7 +118,7 @@ s:${n},
                 return '';
             }).split('').forEach((v,i,a)=>{
                 if(v === '\0') return;
-                var id = dic[v],
+                var id = dict[v],
                     waitFlag = v === '#' && (i ? a[i-1] !== '\\' : true);
                 if(v === '\\'){
                     if(v !== a[i+1]) return;
@@ -139,11 +145,11 @@ n:${id},tx:${x},ty:${y},l:0,
         });
         outputBookmarklet(s);
     }
-    function judge(str,dic_keys){
+    function judge(str,dict_keys){
         var s = "";
         str.split('\n').filter(v=>!/^[a-zA-Z]+@/.test(v)).join('\n')
             .replace(/[\n\r\s　#]|[0-9]+[@\$]/g,'').split('').forEach(v=>{
-            if(dic_keys.indexOf(v) === -1) s += v;
+            if(dict_keys.indexOf(v) === -1) s += v;
         });
         if(s) {
             addErrorMsg("使えない文字があります。");
