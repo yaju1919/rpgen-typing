@@ -94,7 +94,7 @@ t:${s},
             x = 33,
             y = 33;
         str.split("\n").forEach((line)=>{
-            if(line === '') return;
+            if(line === '') return y++;
             if(analysisCmd(line)) return;
             line.replace(/^[0-9]+\$/,function(v){
                 var n = Number(v.slice(0,-1));
