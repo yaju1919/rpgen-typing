@@ -86,8 +86,8 @@ t:${s},
     }
     var g_wait_c, g_wait_n;
     function main(){
-        g_wait_c = 150;
-        g_wait_n = 150;
+        g_wait_c = 0;
+        g_wait_n = 0;
         h_output.empty();
         var str = input_str(),
             dic_keys = Object.keys(dic);;
