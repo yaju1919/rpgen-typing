@@ -45,12 +45,16 @@ function loaded(sampleText){
         backgroundColor:"red",
         fontSize: "2em",
     });
+    var h_output = $("<div>").appendTo(h);
+    function addErrorMsg(str){
+        $("<div>").appendTo(h_output).text(str).css({
+            color: "red",
+            backgroundColor: "pink"
+        });
+    }
     var input_str = yaju1919.addInputText(h,{
         textarea: true,
         title: "歌詞入力欄",
-        placeholder: `810$歌詞←その歌詞が始まる直前に810ミリ秒停止する。
-19@歌詞←その歌詞が始まったとき19秒にシークする。
-歌詞の中に挿入された#は1文字分waitする。`,
         value: sampleText,
         save: "input_str",
         class: "input_str",
@@ -61,13 +65,20 @@ function loaded(sampleText){
         }
     });
     $("textarea").trigger("change");
-    var h_output = $("<div>").appendTo(h);
-    function addErrorMsg(str){
-        $("<div>").appendTo(h_output).text(str).css({
-            color: "red",
-            backgroundColor: "pink"
-        });
-    }
+    $("<pre>").appendTo(h).text(`▼歌詞と同じ行では使えないコマンド
+
+bgm@[YouTubeのURL] ... BGMを[YouTubeのURL]に設定する。
+c@[ミリ秒] ... 文字間の待機時間を[ミリ秒]に設定する。
+n@[ミリ秒] ... 改行間の待機時間を[ミリ秒]に設定する。
+
+
+
+
+▼歌詞と同じ行で使えるコマンド
+
+[秒]@ ... [秒]の位置に動画をシークする
+[ミリ秒]$ ... [ミリ秒]文字送りを止める
+# ... 1文字分何もしない`);
     var sute_gana = "ぁぃぅぇぉゕゖっゃゅょゎァィゥェォヵヶッャュョヮ";
     function addWait(s){
         return Number(s) === 0 ? '' : `
