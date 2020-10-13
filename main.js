@@ -5,6 +5,7 @@ $.get("sample/184.txt",loaded);
 var dict = {};
 [
     "standard.txt",
+    "elementarySchool.txt",
 ].forEach(url=>$.get("dict/"+url,r=>r.split('\n').forEach(v=>{
     var ar = v.split(' ');
     if(ar.length !== 2) {
