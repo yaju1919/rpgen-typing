@@ -7,6 +7,10 @@ var dict = {};
     "standard.txt",
 ].forEach(url=>$.get("dict/"+url,r=>r.split('\n').forEach(v=>{
     var ar = v.split(' ');
+    if(ar.length !== 2) {
+        return console.error(`Error at ${url}
+${v}`);
+    }
     dict[ar[1]] = ar[0];
 })));
 function loaded(sampleText){
