@@ -210,11 +210,11 @@ n:${id},tx:${x},ty:${y},l:0,
         ar.push("#BGIMG\nhttps://i.imgur.com/TCdBukE.png");
         ar.push("#FLOOR\n" + g_floor_ar.join(' ') + '\n'.repeat(15) + "45C\n" + '\n'.repeat(17) + ' '.repeat(startX) + "45C" + '\n'.repeat(y - startY + 45) + "45");
         for(let i = 0; i < 20; i++){
-            var scale = (i + 1) * 5;
+            var scale = (i + 1) * 5 - 1;
             var nowY = startY + scale;
             if(nowY > y) break;
             ar.push(`#SPOINT
-${startX},${nowY},0,${scale}`);
+${startX},${nowY},0,${scale + 1}`);
         }
         ar.push(`
 #EPOINT tx:0,ty:15,
