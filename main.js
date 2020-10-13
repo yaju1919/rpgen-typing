@@ -6,7 +6,7 @@ var dict = {};
 [
     "standard.txt",
     "elementarySchool.txt",
-].forEach(url=>$.get("dict/"+url,r=>r.split('\n').forEach(v=>{
+].forEach(url=>$.get("dict/"+url,r=>r.split('\n').filter(v=>v).forEach(v=>{
     var ar = v.split(' ');
     if(ar.length !== 2) {
         return console.error(`Error at ${url}
