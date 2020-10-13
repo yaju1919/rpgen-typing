@@ -90,7 +90,9 @@ n@[ミリ秒] ... 改行間の待機時間を[ミリ秒]に設定する。
 t:${s},
 #ED`;
     }
-    var g_wait_c, g_wait_n;
+    var g_wait_c, g_wait_n,
+        startX = 33,
+        startY = 33;
     function main(){
         g_wait_c = g_wait_n = 0;
         h_output.empty();
@@ -98,8 +100,8 @@ t:${s},
             dict_keys = Object.keys(dict);;
         if(judge(str,dict_keys)) return;
         var s = "",
-            x = 33,
-            y = 33;
+            x = startX,
+            y = startY;
         str.split("\n").forEach((line)=>{
             if(line === '') return y++;
             if(analysisCmd(line)) return;
@@ -140,7 +142,7 @@ n:${id},tx:${x},ty:${y},l:0,
             });
             s += addWait(g_wait_n);
             y++;
-            x = 33;
+            x = startX;
         });
         outputBookmarklet(s,y);
     }
@@ -201,7 +203,13 @@ n:${id},tx:${x},ty:${y},l:0,
         ar.push("#HERO\n0,15");
         ar.push("#BGM\n");
         ar.push("#BGIMG\nhttps://i.imgur.com/TCdBukE.png");
-        ar.push("#FLOOR\n" + g_floor_ar.join(' ') + '\n'.repeat(15) + "45C\n" + '\n'.repeat(17) + ' '.repeat(33) + "45C" + '\n'.repeat(y - 33 + 45) + "45");
+        ar.push("#FLOOR\n" + g_floor_ar.join(' ') + '\n'.repeat(15) + "45C\n" + '\n'.repeat(17) + ' '.repeat(startX) + "45C" + '\n'.repeat(y - startY + 45) + "45");
+        for(let i = startY; i < 20; i++){
+            var nowY = startY + (i + 1) * 5;
+            if(nowY > y) break;
+            ar.push(`#SPOINT
+${startX},${nowY},0,${i + 1}`);
+        }
         ar.push(`
 #EPOINT tx:0,ty:15,
 #PH0 tm:1,
@@ -231,12 +239,12 @@ t:500,
 #RS_YB
 #ED
 #CH_PH
-p:0,x:33,y:33,
+p:0,x:${startX},y:${startY},
 #ED
 #PHEND0
 `);
         ar.push(`
-#EPOINT tx:33,ty:33,
+#EPOINT tx:${startX},ty:${startY},
 #PH0 tm:1,
 ${s}
 #PHEND0
