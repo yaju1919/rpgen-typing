@@ -27,12 +27,12 @@ function loaded(sampleText){
         id: "input_youtube",
     });
     var h_youtube = $("<div>").appendTo(h);
+    var prevYouTube;
     testYouTube();
     function testYouTube(){
         if(!input_youtube) return;
         var w = $(window).width() * 0.9;
         var url = input_youtube();
-        h_youtube.empty();
         var m,Domain = yaju1919.getDomain(url);
         var query = url.split('?')[1] || '';
         switch(Domain.slice(-2).join('.')){
@@ -41,7 +41,9 @@ function loaded(sampleText){
             case "youtube.com":
                 if(!m) m = url.match(/[\?&]v=([A-Za-z0-9_\-]+)/);
                 if(!m) break;
-                $("<iframe>").appendTo(h_youtube).attr({
+                if(prevYouTube === m[1]) return;
+                prevYouTube = m[1];
+                $("<iframe>").appendTo(h_youtube.empty()).attr({
                     src: "//www.youtube.com/embed/" + m[1]
                 }).css({
                     width: w,
@@ -49,7 +51,7 @@ function loaded(sampleText){
                 });
                 break;
         }
-        if(!m) $("<div>").appendTo(h_youtube).text("YouTubeの動画URLを入力してください。");
+        if(!m) $("<div>").appendTo(h_youtube.empty()).text("YouTubeの動画URLを入力してください。");
     }
     var input_str = yaju1919.addInputText(h,{
         textarea: true,
