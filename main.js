@@ -114,11 +114,11 @@ t:${s},
             if(analysisCmd(line)) return;
             line.replace(/^[0-9]+\$/,function(v){
                 var n = Number(v.slice(0,-1));
-                if(n) s += addWait(n);
+                if(!isNaN(n)) s += addWait(n);
                 return '';
             }).replace(/^[0-9]+@/,function(v){
                 var n = Number(v.slice(0,-1));
-                if(!n) return '';
+                if(!isNaN(n)) return '';
                 s += `
 #SK_YB
 s:${n},
