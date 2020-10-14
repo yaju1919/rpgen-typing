@@ -234,7 +234,7 @@ tx:33,ty:33,t:0,n:1,s:1,
 v:${h_youtube.find("iframe").attr("src").match(/embed\/(.+)$/)[1]},
 #ED
 #WAIT
-t:3000,
+t:2000,
 #ED
 #PS_YB
 #ED
