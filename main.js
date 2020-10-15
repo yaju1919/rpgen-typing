@@ -118,7 +118,7 @@ t:${s},
                 return '';
             }).replace(/^[0-9]+@/,function(v){
                 var n = Number(v.slice(0,-1));
-                if(!isNaN(n)) return '';
+                if(isNaN(n)) return '';
                 s += `
 #SK_YB
 s:${n},
