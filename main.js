@@ -112,15 +112,15 @@ function addWait(s){
 t:${s},
 #ED`;
 }
-var g_mapText, nowX, nowY,
+var g_mapText, g_nowX, g_nowY,
     g_wait_c, g_wait_n,
     g_lines, g_linesY, g_line;
 const startX = 33,
       startY = 33;
 function init(){
     g_mapText = '';
-    nowX = startX;
-    nowY = startY;
+    g_nowX = startX;
+    g_nowY = startY;
     g_wait_c = g_wait_n = 0;
     h_output.empty();
 }
@@ -133,14 +133,14 @@ function main(){
     for(g_linesY = 0; g_linesY < g_lines.length; g_linesY++){
         g_line = g_lines[g_linesY];
         if(g_line === '') {
-            nowY++;
+            g_nowY++;
             continue;
         }
         if(analysisCmd(g_line)) continue;
         loop1();
         g_mapText += addWait(g_wait_n);
-        nowY++;
-        nowX = startX;
+        g_nowY++;
+        g_nowX = startX;
     }
     outputBookmarklet();
 }
@@ -171,17 +171,17 @@ s:${n},
             if(!escapeFlag && row === '#') continue;
         }
         if(!id) {
-            nowX++;
+            g_nowX++;
             continue;
         }
         g_mapText += `
 #MV_PA
-tx:${nowX},ty:${nowY},t:0,n:1,s:1,
+tx:${g_nowX},ty:${g_nowY},t:0,n:1,s:1,
 #ED
 #CH_SP
-n:${id},tx:${nowX},ty:${nowY},l:0,
+n:${id},tx:${g_nowX},ty:${g_nowY},l:0,
 #ED`;
-        nowX++;
+        g_nowX++;
         if(g_floor_ar.indexOf(id) === -1) g_floor_ar.push(id);
     }
 }
@@ -242,13 +242,13 @@ function outputBookmarklet(){
     ar.push("#HERO\n0,15");
     ar.push("#BGM\n");
     ar.push("#BGIMG\nhttps://i.imgur.com/TCdBukE.png");
-    ar.push("#FLOOR\n" + g_floor_ar.join(' ') + '\n'.repeat(15) + "45C\n" +　'\n'.repeat(nowY - startY + 62) + "45");
+    ar.push("#FLOOR\n" + g_floor_ar.join(' ') + '\n'.repeat(15) + "45C\n" +　'\n'.repeat(g_nowY - startY + 62) + "45");
     for(let i = 0; i < 20; i++){
         var scale = (i + 1) * 5 - 1;
-        var nowY = startY + scale;
-        if(nowY > nowY) break;
+        var y = startY + scale;
+        if(y > g_nowY) break;
         ar.push(`#SPOINT
-${startX},${nowY},0,${scale + 1}`);
+${startX},${y},0,${scale + 1}`);
     }
     ar.push(`
 #EPOINT tx:0,ty:15,
