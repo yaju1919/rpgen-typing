@@ -77,7 +77,8 @@ n@[ミリ秒] ... 改行間の待機時間を[ミリ秒]に設定する。
 
 [秒]@ ... [秒]の位置に動画をシークする
 [ミリ秒]$ ... [ミリ秒]文字送りを止める
-# ... 1文字分何もしない`);
+# ... 1文字分何もしない
+[n]& ... [n]重唱`);
     $("<button>").appendTo(h).text("マップ作成").on("click",main).css({
         color:"yellow",
         backgroundColor:"red",
@@ -97,66 +98,83 @@ n@[ミリ秒] ... 改行間の待機時間を[ミリ秒]に設定する。
 t:${s},
 #ED`;
     }
-    var g_wait_c, g_wait_n,
-        startX = 33,
-        startY = 33;
-    function main(){
+    var g_mapText, nowX, nowY,
+        g_wait_c, g_wait_n,
+        g_lines, g_linesY, g_line;
+    const startX = 33,
+          startY = 33;
+    function init(){
+        g_mapText = '';
+        nowX = startX;
+        nowY = startY;
         g_wait_c = g_wait_n = 0;
         h_output.empty();
+    }
+    function main(){
+        init();
         var str = input_str(),
-            dict_keys = Object.keys(dict);;
+            dict_keys = Object.keys(dict);
         if(judge(str,dict_keys)) return;
-        var s = "",
-            x = startX,
-            y = startY;
-        str.split("\n").forEach((line)=>{
-            if(line === '') return y++;
-            if(analysisCmd(line)) return;
-            line.replace(/^[0-9]+\$/,function(v){
-                var n = Number(v.slice(0,-1));
-                if(!isNaN(n)) s += addWait(n);
-                return '';
-            }).replace(/^[0-9]+@/,function(v){
-                var n = Number(v.slice(0,-1));
-                if(isNaN(n)) return '';
-                s += `
+        g_lines = str.split("\n");
+        for(g_linesY = 0; g_linesY < g_lines.length; g_linesY++){
+            g_line = g_lines[g_linesY];
+            if(g_line === '') {
+                nowY++;
+                continue;
+            }
+            if(analysisCmd(g_line)) continue;
+            loop1();
+            g_mapText += addWait(g_wait_n);
+            nowY++;
+            nowX = startX;
+        }
+        outputBookmarklet();
+    }
+    function loop1(){
+        var rows = g_line.replace(/^[0-9]+\$/,function(v){
+            var n = Number(v.slice(0,-1));
+            if(!isNaN(n)) g_mapText += addWait(n);
+            return '';
+        }).replace(/^[0-9]+@/,function(v){
+            var n = Number(v.slice(0,-1));
+            if(isNaN(n)) return '';
+            g_mapText += `
 #SK_YB
 s:${n},
 #ED`;
-                return '';
-            }).split('').forEach((v,i,a)=>{
-                if(v === '\0') return;
-                var id = dict[v],
-                    waitFlag = v === '#' && (i ? a[i-1] !== '\\' : true);
-                if(v === '\\'){
-                    if(v !== a[i+1]) return;
-                    a[i+1] = '\0';
-                }
-                if(((i && sute_gana.indexOf(v) === -1) && id) || waitFlag){
-                    s += addWait(g_wait_c);
-                }
-                if(waitFlag) return;
-                else if(!id) return x++;
-                s += `
+            return '';
+        }).split('');
+        for(let rowX = 0; rowX < rows.length; rowX++) {
+            var row = rows[rowX], escapeFlag = false;
+            if(row === '\\'){
+                escapeFlag = true;
+                row = rows[rowX+1];
+                rowX++;
+            }
+            var id = dict[row];
+            if(rowX && sute_gana.indexOf(row) === -1 && id){
+                g_mapText += addWait(g_wait_c);
+                if(!escapeFlag && row === '#') continue;
+            }
+            if(!id) {
+                nowX++;
+                continue;
+            }
+            g_mapText += `
 #MV_PA
-tx:${x},ty:${y},t:0,n:1,s:1,
+tx:${nowX},ty:${nowY},t:0,n:1,s:1,
 #ED
 #CH_SP
-n:${id},tx:${x},ty:${y},l:0,
+n:${id},tx:${nowX},ty:${nowY},l:0,
 #ED`;
-                x++;
-                if(g_floor_ar.indexOf(id) === -1) g_floor_ar.push(id);
-            });
-            s += addWait(g_wait_n);
-            y++;
-            x = startX;
-        });
-        outputBookmarklet(s,y);
+            nowX++;
+            if(g_floor_ar.indexOf(id) === -1) g_floor_ar.push(id);
+        }
     }
     function judge(str,dict_keys){
         var s = "";
         str.split('\n').filter(v=>!/^[a-zA-Z]+@/.test(v)).join('\n')
-            .replace(/[\n\r\s　#]|[0-9]+[@\$]/g,'').split('').forEach(v=>{
+            .replace(/[\n\r\s　#]|[0-9]+[@\$&]/g,'').split('').forEach(v=>{
             if(dict_keys.indexOf(v) === -1) s += v;
         });
         if(s) {
@@ -205,16 +223,16 @@ n:${id},tx:${x},ty:${y},l:0,
         });
     }
     var g_floor_ar = [];
-    function outputBookmarklet(s,y){
+    function outputBookmarklet(){
         var ar = [];
         ar.push("#HERO\n0,15");
         ar.push("#BGM\n");
         ar.push("#BGIMG\nhttps://i.imgur.com/TCdBukE.png");
-        ar.push("#FLOOR\n" + g_floor_ar.join(' ') + '\n'.repeat(15) + "45C\n" + '\n'.repeat(17) + ' '.repeat(startX) + "45C" + '\n'.repeat(y - startY + 45) + "45");
+        ar.push("#FLOOR\n" + g_floor_ar.join(' ') + '\n'.repeat(15) + "45C\n" +　'\n'.repeat(nowY - startY + 62) + "45");
         for(let i = 0; i < 20; i++){
             var scale = (i + 1) * 5 - 1;
             var nowY = startY + scale;
-            if(nowY > y) break;
+            if(nowY > nowY) break;
             ar.push(`#SPOINT
 ${startX},${nowY},0,${scale + 1}`);
         }
@@ -254,7 +272,7 @@ p:0,x:${startX},y:${startY},
         ar.push(`
 #EPOINT tx:${startX},ty:${startY},
 #PH0 tm:1,
-${s}
+${g_mapText}
 #PHEND0
 `);
         var file = LZString.compressToEncodedURIComponent(ar.map(v=>v+"#END").join('\n\n'));
