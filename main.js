@@ -32,7 +32,7 @@ yaju1919.addSelect(h,{
     change: function(v){
         if(!v) return;
         $.get(`sample/${v}.txt`, function(r){
-            $(".input_str").val(r);
+            $(".input_str").val(r).trigger("change");
         });
     }
 });
