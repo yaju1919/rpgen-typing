@@ -244,7 +244,8 @@ n:${id},tx:${g_nowX+x},ty:${g_nowY+y},l:0,
             });
         });
         g_mapText += addWait(g_wait_n);
-        g_nowY+=n;
+        g_linesY += n;
+        g_nowY += n;
         g_nowX = startX;
         return true;
     }
