@@ -51,7 +51,7 @@ function testYouTube(){
     var m,Domain = yaju1919.getDomain(url);
     var query = url.split('?')[1] || '';
     switch(Domain.slice(-2).join('.')){
-        case "youtu.be": // YouTube
+        case "youtu.be":
             m = url.match(/youtu\.be\/([A-Za-z0-9_\-]+)/);
         case "youtube.com":
             if(!m) m = url.match(/[\?&]v=([A-Za-z0-9_\-]+)/);
@@ -62,7 +62,7 @@ function testYouTube(){
                 src: "//www.youtube.com/embed/" + m[1]
             }).css({
                 width: w,
-                height: w * (9/16) // 16:9
+                height: w * (9/16)
             });
             break;
     }
@@ -83,7 +83,7 @@ $("<pre>").appendTo(h).text(`▼歌詞と同じ行では使えないコマンド
 bgm@[YouTubeのURL] ... BGMを[YouTubeのURL]に設定する。1つしか適用されない。
 c@[ミリ秒] ... 文字間の待機時間を[ミリ秒]に設定する。
 n@[ミリ秒] ... 改行間の待機時間を[ミリ秒]に設定する。
-[n]& ... [n]重唱
+[n]& ... [n]重唱 (この中では全てのコマンドが使えません。)
 
 
 
@@ -131,12 +131,12 @@ function main(){
     g_lines = str.split("\n");
     for(g_linesY = 0; g_linesY < g_lines.length; g_linesY++){
         g_line = g_lines[g_linesY];
-        if(g_line === '') {
+        if(cmdDuet()) continue;
+        else if(analysisCmd()) continue;
+        else if(main2()) {
             g_nowY++;
             continue;
         }
-        if(analysisCmd(g_line)) continue;
-        main2();
         g_mapText += addWait(g_wait_n);
         g_nowY++;
         g_nowX = startX;
@@ -157,6 +157,7 @@ s:${n},
 #ED`;
         return '';
     }).split('');
+    if(!rows.length) return true;
     for(let rowX = 0; rowX < rows.length; rowX++) {
         var row = rows[rowX], escapeFlag = false;
         if(row === '\\'){
@@ -186,6 +187,7 @@ n:${id},tx:${g_nowX},ty:${g_nowY},l:0,
         g_nowX++;
         if(g_floor_ar.indexOf(id) === -1) g_floor_ar.push(id);
     }
+    return false;
 }
 function judge(str,dict_keys){
     var s = "";
@@ -203,9 +205,9 @@ function judge(str,dict_keys){
     }
     return s;
 }
-function analysisCmd(line){ // コマンド
-    if(!/^[^0-9\\]+@/.test(line)) return false;
-    var ar = line.split('@');
+function analysisCmd(){
+    if(!/^[^0-9\\]+@/.test(g_line)) return false;
+    var ar = g_line.split('@');
     switch(ar[0]){
         case 'bgm':
             break;
@@ -218,13 +220,46 @@ function analysisCmd(line){ // コマンド
         default:
             addErrorMsg("該当のコマンドは存在しません。");
             addErrorMsg("普通の文字として扱うなら前に\\を追加してエスケープしてください。");
-            addErrorMsg(line);
+            addErrorMsg(g_line);
             break;
     }
     return true;
 }
+function cmdDuet(){
+    if(/[0-9]+&/.test(g_line)){
+        var n = Number(g_line.match(/[0-9]+/)[0]);
+        if(n < 2 || n > 6) {
+            addErrorMsg("[n]重奏コマンドの[n]は2~6の範囲で指定してください。");
+            addErrorMsg(g_line);
+            return true;
+        }
+        var ar = yaju1919.makeArray(n).map(i=>g_lines[g_linesY+i+1]);
+        var max = yaju1919.max(ar.map(v=>v.length));
+        yaju1919.makeArray(max).map(i=>yaju1919.makeArray(n).map(v=>ar[v][i])).forEach((v,x)=>{
+            if(x) g_mapText += addWait(g_wait_c);
+            g_mapText += `
+#MV_PA
+tx:${g_nowX+x},ty:${g_nowY},t:0,n:1,s:1,
+#ED`;
+            v.forEach((c,y)=>{
+                if(!c) return;
+                var id = dict[c];
+                if(!id) return;
+                g_mapText += `
+#CH_SP
+n:${id},tx:${g_nowX+x},ty:${g_nowY+y},l:0,
+#ED`;
+            });
+        });
+        g_mapText += addWait(g_wait_n);
+        g_nowY+=n;
+        g_nowX = startX;
+        return true;
+    }
+    return false;
+}
 //----------------------------------------------------------------------
-function toStr(func){ // 関数を文字列化
+function toStr(func){
     return String(func).replace(/\/\/.*\n/g,'');
 }
 function write(){
@@ -298,5 +333,4 @@ ${g_mapText}
         textarea: true,
         readonly: true
     });
-
 }
