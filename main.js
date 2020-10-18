@@ -32,7 +32,7 @@ yaju1919.addSelect(h,{
     change: function(v){
         if(!v) return;
         $.get(`sample/${v}.txt`, function(r){
-            $(".input_str").val(r).trigger("change");
+            $("#input_str").val(r).trigger("change");
         });
     }
 });
@@ -72,12 +72,11 @@ var input_str = yaju1919.addInputText(h,{
     textarea: true,
     title: "歌詞入力欄",
     save: "input_str",
-    class: "input_str",
+    id: "input_str",
     change: function(v){
         var bgm = v.split('\n').filter(v=>/^[a-zA-Z]+@/.test(v)).filter(v=>/^bgm@/.test(v))[0];
         if(bgm) $("#input_youtube").val(bgm.slice(4)).trigger("change");
     },
-    class: "input_str"
 });
 $("<pre>").appendTo(h).text(`▼歌詞と同じ行では使えないコマンド
 
@@ -137,14 +136,14 @@ function main(){
             continue;
         }
         if(analysisCmd(g_line)) continue;
-        loop1();
+        main2();
         g_mapText += addWait(g_wait_n);
         g_nowY++;
         g_nowX = startX;
     }
     outputBookmarklet();
 }
-function loop1(){
+function main2(){
     var rows = g_line.replace(/^[0-9]+\$/,function(v){
         var n = Number(v.slice(0,-1));
         if(!isNaN(n)) g_mapText += addWait(n);
@@ -165,10 +164,13 @@ s:${n},
             row = rows[rowX+1];
             rowX++;
         }
+        if(row === '#'){
+            g_mapText += addWait(g_wait_c);
+            continue;
+        }
         var id = dict[row];
         if(rowX && sute_gana.indexOf(row) === -1 && id){
             g_mapText += addWait(g_wait_c);
-            if(!escapeFlag && row === '#') continue;
         }
         if(!id) {
             g_nowX++;
