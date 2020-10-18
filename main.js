@@ -36,18 +36,10 @@ yaju1919.addSelect(h,{
         });
     }
 });
-var input_youtube = yaju1919.addInputText(h,{
-    title: "YouTubeのテスト再生",
-    change: testYouTube,
-    id: "input_youtube",
-});
 var h_youtube = $("<div>").appendTo(h);
 var prevYouTube;
-testYouTube();
-function testYouTube(){
-    if(!input_youtube) return;
+function testYouTube(url){
     var w = $(window).width() * 0.9;
-    var url = input_youtube();
     var m,Domain = yaju1919.getDomain(url);
     var query = url.split('?')[1] || '';
     switch(Domain.slice(-2).join('.')){
@@ -75,7 +67,7 @@ var input_str = yaju1919.addInputText(h,{
     id: "input_str",
     change: function(v){
         var bgm = v.split('\n').filter(v=>/^[a-zA-Z]+@/.test(v)).filter(v=>/^bgm@/.test(v))[0];
-        if(bgm) $("#input_youtube").val(bgm.slice(4)).trigger("change");
+        if(bgm) testYouTube(bgm.slice(4));
     },
 });
 $("<pre>").appendTo(h).text(`▼歌詞と同じ行では使えないコマンド
