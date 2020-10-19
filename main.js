@@ -106,10 +106,12 @@ t:${s},
 }
 var g_mapText, g_nowX, g_nowY,
     g_wait_c, g_wait_n,
-    g_lines, g_linesY, g_line;
+    g_lines, g_linesY, g_line,
+    g_floor_ar;
 const startX = 33,
       startY = 33;
 function init(){
+    g_floor_ar = []
     g_mapText = '';
     g_nowX = startX;
     g_nowY = startY;
@@ -242,6 +244,7 @@ tx:${g_nowX+x},ty:${g_nowY},t:0,n:1,s:1,
 #CH_SP
 n:${id},tx:${g_nowX+x},ty:${g_nowY+y},l:0,
 #ED`;
+                if(g_floor_ar.indexOf(id) === -1) g_floor_ar.push(id);
             });
         });
         g_mapText += addWait(g_wait_n);
@@ -267,7 +270,6 @@ function write(){
         apprise("error");
     });
 }
-var g_floor_ar = [];
 function outputBookmarklet(){
     var ar = [];
     ar.push("#HERO\n0,15");
