@@ -189,7 +189,7 @@ function judge(str,dict_keys){
     var s = "";
     str.split('\n').filter(v=>!/^[a-zA-Z]+@/.test(v)).join('\n')
         .replace(/[\n\r\s　#]|[0-9]+[@\$&]/g,'').split('').forEach(v=>{
-        if(dict_keys.indexOf(v) === -1) s += v;
+        if(dict_keys.indexOf(v) === -1 && s.indexOf(v) === -1) s += v;
     });
     if(s) {
         addErrorMsg("使えない文字があります。");
