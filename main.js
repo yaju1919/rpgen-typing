@@ -186,20 +186,20 @@ n:${id},tx:${g_nowX},ty:${g_nowY},l:0,
     return false;
 }
 function judge(str,dict_keys){
-    var s = "";
+    var ar = [];
     str.split('\n').filter(v=>!/^[a-zA-Z]+@/.test(v)).join('\n')
         .replace(/[\n\r\s　#]|[0-9]+[@\$&]/g,'').split('').forEach(v=>{
-        if(dict_keys.indexOf(v) === -1 && s.indexOf(v) === -1) s += v;
+        if(dict_keys.indexOf(v) === -1 && ar.indexOf(v) === -1) ar.push(v);
     });
-    if(s) {
+    if(ar.length) {
         addErrorMsg("使えない文字があります。");
         yaju1919.addInputText(h_output,{
             title: "使えない文字",
-            value: s,
+            value: '["' + ar.join('","') + '"]',
             readonly: true
         });
     }
-    return s;
+    return ar.length;
 }
 function analysisCmd(){
     if(!/^[^0-9\\]+@/.test(g_line)) return false;
