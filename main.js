@@ -3,10 +3,13 @@ var $ = window.$,
     LZString = window.LZString;
 var dict = {};
 [
-    "standard.txt",
-    "elementarySchool.txt",
-    "juniorHighSchool.txt",
-].forEach(url=>$.get("dict/"+url,r=>r.split('\n').filter(v=>v).forEach(v=>{
+    "standard",
+    "elementarySchool",
+    "juniorHighSchool",
+    "otherKanji",
+    "greek",
+    "tenji",
+].forEach(url=>$.get(`dict/${url}.txt`,r=>r.split('\n').filter(v=>v).forEach(v=>{
     var ar = v.split(' ');
     if(ar.length !== 2) {
         return console.error(`Error at ${url}
