@@ -33,6 +33,7 @@ yaju1919.addSelect(h,{
         "イワシはつちからはえてくるんだ（裏歌詞）": "184-ura",
         "ウミガメのなみだはしおらしい": "umigame",
         "螟冗ｶｾ逶ｮ": "cecilia",
+        "ヤマイダレ": "yamaidare",
         "ケツとオチンポがかゆいのです": "kayui",
     },
     change: function(v){
