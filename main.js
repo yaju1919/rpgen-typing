@@ -201,7 +201,7 @@ n:${id},tx:${g_nowX},ty:${g_nowY},l:0,
 }
 function judge(str,dict_keys){
     var ar = [];
-    str.split('\n').filter(v=>!/^[a-zA-Z]+@/.test(v)).join('\n')
+    str.split('\n').filter(v=>!/^[a-zA-Z\-]+@/.test(v)).join('\n')
         .replace(/[\n\r\s　#]|[0-9]+[@\$&]/g,'').split('').forEach(v=>{
         if(dict_keys.indexOf(v) === -1 && ar.indexOf(v) === -1) ar.push(v);
     });
