@@ -108,7 +108,7 @@ var sute_gana = "ぁぃぅぇぉゕゖっゃゅょゎァィゥェォヵヶッャ
 function addWait(n){
     return n === 0 ? '' : `
 #WAIT
-t:${n},
+t:${Math.floor(n)},
 #ED`;
 }
 var g_mapText, g_nowX, g_nowY,
