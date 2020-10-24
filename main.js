@@ -82,8 +82,9 @@ $("<pre>").appendTo(h).text(`▼歌詞と同じ行では使えないコマンド
 bgm@[YouTubeのURL] ... BGMを[YouTubeのURL]に設定する。1つしか適用されない。
 c@[ミリ秒] ... 文字間の待機時間を[ミリ秒]に設定する。
 n@[ミリ秒] ... 改行間の待機時間を[ミリ秒]に設定する。
-fast@[n] ... Alphabetと数字のとき、文字間の待機時間を1/n倍にする。
 [n]& ... [n]重唱 ( 1 < n < 7 )
+c-en@[ミリ秒] ... Alphabetの文字間の待機時間を[ミリ秒]に設定する。
+c-num@[ミリ秒] ... 数字の文字間の待機時間を[ミリ秒]に設定する。
 
 
 
@@ -112,7 +113,8 @@ t:${Math.floor(n)},
 #ED`;
 }
 var g_mapText, g_nowX, g_nowY,
-    g_wait_c, g_wait_n, g_fast,
+    g_wait_c, g_wait_n,
+    g_wait_c_en, g_wait_c_num,
     g_lines, g_linesY, g_line,
     g_floor_ar;
 const startX = 33,
@@ -122,8 +124,7 @@ function init(){
     g_mapText = '';
     g_nowX = startX;
     g_nowY = startY;
-    g_wait_c = g_wait_n = 0;
-    g_fast = 1;
+    g_wait_c = g_wait_n = g_wait_c_en = g_wait_c_num = 0;
     h_output.empty();
 }
 function main(){
@@ -174,11 +175,13 @@ s:${n},
         }
         var id = dict[row];
         if(rowX && sute_gana.indexOf(row) === -1 && id){
-            g_mapText += addWait(
-                /[0-9a-zA-Z]/.test(rows[rowX-1])
-                ? g_wait_c / g_fast
-                : g_wait_c
-            );
+            if(g_wait_c_en && /[a-zA-Z]/.test(row)){
+                g_mapText += addWait(g_wait_c_en);
+            }
+            else if(g_wait_c_num && /[0-9]/.test(row)){
+                g_mapText += addWait(g_wait_c_num);
+            }
+            else g_mapText += addWait(g_wait_c);
         }
         if(!id) {
             g_nowX++;
@@ -214,20 +217,22 @@ function judge(str,dict_keys){
 }
 function analysisCmd(){
     if(!/^[^0-9\\]+@/.test(g_line)) return false;
-    var ar = g_line.split('@'), n;
+    var ar = g_line.split('@'),
+        n = Number(ar[1]);
     switch(ar[0]){
         case 'bgm':
             break;
         case 'c':
-            g_wait_c = Number(ar[1]);
+            g_wait_c = n;
             break;
         case 'n':
-            g_wait_n = Number(ar[1]);
+            g_wait_n = n;
             break;
-        case 'fast':
-            n = Number(ar[1]);
-            if(n <= 0) addErrorMsg("0以下の数値は使えません。");
-            else g_fast = n;
+        case 'c-en':
+            g_wait_c_en = n;
+            break;
+        case 'c-num':
+            g_wait_c_num = n;
             break;
         default:
             addErrorMsg("該当のコマンドは存在しません。");
