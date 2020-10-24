@@ -35,6 +35,7 @@ yaju1919.addSelect(h,{
         "螟冗ｶｾ逶ｮ": "cecilia",
         "ヤマイダレ": "yamaidare",
         "ケツとオチンポがかゆいのです": "kayui",
+        "PARTY☆NIGHT": "partyNight",
     },
     change: function(v){
         if(!v) return;
