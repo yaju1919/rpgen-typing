@@ -82,7 +82,8 @@ $("<pre>").appendTo(h).text(`▼歌詞と同じ行では使えないコマンド
 bgm@[YouTubeのURL] ... BGMを[YouTubeのURL]に設定する。1つしか適用されない。
 c@[ミリ秒] ... 文字間の待機時間を[ミリ秒]に設定する。
 n@[ミリ秒] ... 改行間の待機時間を[ミリ秒]に設定する。
-[n]& ... [n]重唱 (この中では全てのコマンドが使えません。)
+fast@[n] ... Alphabetと数字のとき、文字間の待機時間を1/n倍にする。
+[n]& ... [n]重唱 ( 1 < n < 7 )
 
 
 
@@ -104,14 +105,14 @@ function addErrorMsg(str){
     });
 }
 var sute_gana = "ぁぃぅぇぉゕゖっゃゅょゎァィゥェォヵヶッャュョヮ";
-function addWait(s){
-    return Number(s) === 0 ? '' : `
+function addWait(n){
+    return n === 0 ? '' : `
 #WAIT
-t:${s},
+t:${n},
 #ED`;
 }
 var g_mapText, g_nowX, g_nowY,
-    g_wait_c, g_wait_n,
+    g_wait_c, g_wait_n, g_fast,
     g_lines, g_linesY, g_line,
     g_floor_ar;
 const startX = 33,
@@ -122,6 +123,7 @@ function init(){
     g_nowX = startX;
     g_nowY = startY;
     g_wait_c = g_wait_n = 0;
+    g_fast = 1;
     h_output.empty();
 }
 function main(){
@@ -172,7 +174,11 @@ s:${n},
         }
         var id = dict[row];
         if(rowX && sute_gana.indexOf(row) === -1 && id){
-            g_mapText += addWait(g_wait_c);
+            g_mapText += addWait(
+                /[0-9a-zA-Z]/.test(rows[rowX-1])
+                ? g_wait_c / g_fast
+                : g_wait_c
+            );
         }
         if(!id) {
             g_nowX++;
@@ -208,15 +214,20 @@ function judge(str,dict_keys){
 }
 function analysisCmd(){
     if(!/^[^0-9\\]+@/.test(g_line)) return false;
-    var ar = g_line.split('@');
+    var ar = g_line.split('@'), n;
     switch(ar[0]){
         case 'bgm':
             break;
         case 'c':
-            g_wait_c = ar[1];
+            g_wait_c = Number(ar[1]);
             break;
         case 'n':
-            g_wait_n = ar[1];
+            g_wait_n = Number(ar[1]);
+            break;
+        case 'fast':
+            n = Number(ar[1]);
+            if(n <= 0) addErrorMsg("0以下の数値は使えません。");
+            else g_fast = n;
             break;
         default:
             addErrorMsg("該当のコマンドは存在しません。");
