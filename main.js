@@ -35,6 +35,7 @@ yaju1919.addSelect(h,{
         "ワニたちのなみだはうそらしい": "wani",
         "螟冗ｶｾ逶ｮ": "cecilia",
         "ヤマイダレ": "yamaidare",
+        "XXさないでください": "XX",
         "ケツとオチンポがかゆいのです": "kayui",
         "PARTY☆NIGHT": "partyNight",
     },
