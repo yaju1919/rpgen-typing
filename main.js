@@ -41,6 +41,7 @@ yaju1919.addSelect(h,{
         "ヤマイダレ": "yamaidare",
         "XXさないでください": "XX",
         "ケツとオチンポがかゆいのです": "kayui",
+        "初音ミクの消失": "shoshitsu",
         "PARTY☆NIGHT": "partyNight",
     },
     change: function(v){
