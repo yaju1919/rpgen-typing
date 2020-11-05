@@ -36,7 +36,7 @@ yaju1919.addSelect(h,{
         "!": "kyozo-1",
         "i": "kyozo-i",
         "䊼髥莏": "kyozo-j",
-        "_": "_",
+        "_": "syachi",
         "螟冗ｶｾ逶ｮ": "cecilia",
         "ヤマイダレ": "yamaidare",
         "XXさないでください": "XX",
@@ -88,11 +88,12 @@ var input_str = yaju1919.addInputText(h,{
 $("<pre>").appendTo(h).text(`▼歌詞と同じ行では使えないコマンド
 
 bgm@[YouTubeのURL] ... BGMを[YouTubeのURL]に設定する。1つしか適用されない。
-c@[ミリ秒] ... 文字間の待機時間を[ミリ秒]に設定する。
-n@[ミリ秒] ... 改行間の待機時間を[ミリ秒]に設定する。
+c@[ミリ秒] ... 文字間の遅延時間を[ミリ秒]に設定する。
+n@[ミリ秒] ... 改行間の遅延時間を[ミリ秒]に設定する。
 [n]& ... [n]重唱 ( 1 < n < 7 )
-c-en@[ミリ秒] ... Alphabetの文字間の待機時間を[ミリ秒]に設定する。
-c-num@[ミリ秒] ... 数字の文字間の待機時間を[ミリ秒]に設定する。
+c-en@[ミリ秒] ... Alphabetの文字間の遅延時間を[ミリ秒]に設定する。
+c-num@[ミリ秒] ... 数字の文字間の遅延時間を[ミリ秒]に設定する。
+ruby@[ 1 or 0 ] ... 1(true)だと、ルビを示す()内では遅延時間を0にする。
 
 
 
@@ -115,7 +116,7 @@ function addErrorMsg(str){
 }
 var sute_gana = "ぁぃぅぇぉゕゖっゃゅょゎァィゥェォヵヶッャュョヮ";
 function addWait(n){
-    return n === 0 ? '' : `
+    g_mapText += n === 0 || (g_ruby && g_rubying) ? '' : `
 #WAIT
 t:${Math.floor(n)},
 #ED`;
@@ -123,6 +124,7 @@ t:${Math.floor(n)},
 var g_mapText, g_nowX, g_nowY,
     g_wait_c, g_wait_n,
     g_wait_c_en, g_wait_c_num,
+    g_ruby, g_rubying,
     g_lines, g_linesY, g_line,
     g_floor_ar;
 const startX = 33,
@@ -133,6 +135,7 @@ function init(){
     g_nowX = startX;
     g_nowY = startY;
     g_wait_c = g_wait_n = g_wait_c_en = g_wait_c_num = 0;
+    g_ruby = g_rubying = false;
     h_output.empty();
 }
 function main(){
@@ -149,7 +152,7 @@ function main(){
             g_nowY++;
             continue;
         }
-        g_mapText += addWait(g_wait_n);
+        addWait(g_wait_n);
         g_nowY++;
         g_nowX = startX;
     }
@@ -158,7 +161,7 @@ function main(){
 function main2(){
     var rows = g_line.replace(/^[0-9]+\$/,function(v){
         var n = Number(v.slice(0,-1));
-        if(!isNaN(n)) g_mapText += addWait(n);
+        if(!isNaN(n)) addWait(n);
         return '';
     }).replace(/^[0-9]+@/,function(v){
         var n = Number(v.slice(0,-1));
@@ -172,24 +175,26 @@ s:${n},
     if(!rows.length) return true;
     for(let rowX = 0; rowX < rows.length; rowX++) {
         var row = rows[rowX], escapeFlag = false;
+        if(row === '(') g_rubying = true;
+        if(row === ')') g_rubying = false;
+        if(row === '#'){
+            addWait(g_wait_c);
+            continue;
+        }
         if(row === '\\'){
             escapeFlag = true;
             row = rows[rowX+1];
             rowX++;
         }
-        if(row === '#'){
-            g_mapText += addWait(g_wait_c);
-            continue;
-        }
         var id = dict[row];
         if(rowX && sute_gana.indexOf(row) === -1 && id){
             if(g_wait_c_en && /[a-zA-Z]/.test(row)){
-                g_mapText += addWait(g_wait_c_en);
+                addWait(g_wait_c_en);
             }
             else if(g_wait_c_num && /[0-9]/.test(row)){
-                g_mapText += addWait(g_wait_c_num);
+                addWait(g_wait_c_num);
             }
-            else g_mapText += addWait(g_wait_c);
+            else addWait(g_wait_c);
         }
         if(!id) {
             g_nowX++;
@@ -242,6 +247,9 @@ function analysisCmd(){
         case 'c-num':
             g_wait_c_num = n;
             break;
+        case 'ruby':
+            g_ruby = n !== 0;
+            break;
         default:
             addErrorMsg("該当のコマンドは存在しません。");
             addErrorMsg("普通の文字として扱うなら前に\\を追加してエスケープしてください。");
@@ -261,7 +269,7 @@ function cmdDuet(){
         var ar = yaju1919.makeArray(n).map(i=>g_lines[g_linesY+i+1]);
         var max = yaju1919.max(ar.map(v=>v.length));
         yaju1919.makeArray(max).map(i=>yaju1919.makeArray(n).map(v=>ar[v][i])).forEach((v,x)=>{
-            if(x) g_mapText += addWait(g_wait_c);
+            if(x) addWait(g_wait_c);
             g_mapText += `
 #MV_PA
 tx:${g_nowX+x},ty:${g_nowY},t:0,n:1,s:1,
@@ -277,7 +285,7 @@ n:${id},tx:${g_nowX+x},ty:${g_nowY+y},l:0,
                 if(g_floor_ar.indexOf(id) === -1) g_floor_ar.push(id);
             });
         });
-        g_mapText += addWait(g_wait_n);
+        addWait(g_wait_n);
         g_linesY += n;
         g_nowY += n;
         g_nowX = startX;
