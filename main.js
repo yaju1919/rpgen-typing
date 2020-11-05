@@ -347,7 +347,7 @@ ${g_mapText}
 #PHEND0
 `);
     yaju1919.addInputText(h_output,{
-        value: window.Bookmarklet.writeMapData(ar.map(v=>v+"#END").join('\n\n')),
+        value: window.Bookmarklet.writeMapData(ar.map(v=>v+"#END").join('\n\n'))[1],
         textarea: true,
         readonly: true
     });
