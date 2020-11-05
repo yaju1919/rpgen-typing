@@ -294,20 +294,6 @@ n:${id},tx:${g_nowX+x},ty:${g_nowY+y},l:0,
     return false;
 }
 //----------------------------------------------------------------------
-function toStr(func){
-    return String(func).replace(/\/\/.*\n/g,'');
-}
-function write(){
-    $.post(dqSock.getRPGBase() + 'cons/writeMapText.php',{
-        token: g_token,
-        index: parseInt(dq.mapNum),
-        mapText: (dq.bOpenScr ? '' : 'L1') + map,
-    }).done(function(r){
-        if ( r != 0 ) apprise("error");
-    }).fail(function(){
-        apprise("error");
-    });
-}
 function outputBookmarklet(){
     var ar = [];
     ar.push("#HERO\n0,15");
@@ -360,10 +346,8 @@ p:0,x:${startX},y:${startY},
 ${g_mapText}
 #PHEND0
 `);
-    var file = LZString.compressToEncodedURIComponent(ar.map(v=>v+"#END").join('\n\n'));
-    var str = 'avascript:(function(){var map="' + file + '";(' + toStr(write) + ')();})();';
     yaju1919.addInputText(h_output,{
-        value: str,
+        value: window.Bookmarklet.writeMapData(ar.map(v=>v+"#END").join('\n\n')),
         textarea: true,
         readonly: true
     });
