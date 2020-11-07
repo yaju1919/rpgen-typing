@@ -371,7 +371,7 @@ function main3(){
     var reg = /[\n\r\s　]/g;
     if(judge(str.replace(reg,''),dict_keys)) return;
     var result = str.split('\n').map(function(line){
-        return str.split('').map(function(c){
+        return line.split('').map(function(c){
             return reg.test(c) ? '45' : dict[c];
         }).join(' ');
     }).join('\n');
