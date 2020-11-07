@@ -373,7 +373,7 @@ function main3(){
             return c === ' ' ? '45' : dict[c];
         }).join(' ');
     }).join('\n');
-    yaju1919.addInputText(h_output,{
+    yaju1919.addInputText(h_output.empty(),{
         value: result,
         textarea: true,
         readonly: true
