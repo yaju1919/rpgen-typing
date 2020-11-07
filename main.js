@@ -365,6 +365,7 @@ $("<button>").appendTo(h).text("スプライトセット作成").on("click",main
     fontSize: "2em",
 });
 function main3(){
+    init();
     var str = input_str2(),
         dict_keys = Object.keys(dict);
     if(judge(str.replace(/ \n/g,''),dict_keys)) return;
@@ -373,7 +374,7 @@ function main3(){
             return c === ' ' ? '45' : dict[c];
         }).join(' ');
     }).join('\n');
-    yaju1919.addInputText(h_output.empty(),{
+    yaju1919.addInputText(h_output,{
         value: result,
         textarea: true,
         readonly: true
