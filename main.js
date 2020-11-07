@@ -368,7 +368,7 @@ function main3(){
     init();
     var str = input_str2(),
         dict_keys = Object.keys(dict);
-    if(judge(str.replace(/ \n/g,''),dict_keys)) return;
+    if(judge(str.replace(/[ \n]/g,''),dict_keys)) return;
     var result = str.split('\n').map(function(line){
         return str.split('').map(function(c){
             return c === ' ' ? '45' : dict[c];
