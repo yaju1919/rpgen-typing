@@ -142,7 +142,8 @@ function main(){
     init();
     var str = input_str(),
         dict_keys = Object.keys(dict);
-    if(judge(str,dict_keys)) return;
+    if(judge(str.split('\n').filter(v=>!/^[a-zA-Z\-]+@/.test(v)).join('\n')
+             .replace(/[\n\r\s　#]|[0-9]+[@\$&]/g,''),dict_keys)) return;
     g_lines = str.split("\n");
     for(g_linesY = 0; g_linesY < g_lines.length; g_linesY++){
         g_line = g_lines[g_linesY];
@@ -214,8 +215,7 @@ n:${id},tx:${g_nowX},ty:${g_nowY},l:0,
 }
 function judge(str,dict_keys){
     var ar = [];
-    str.split('\n').filter(v=>!/^[a-zA-Z\-]+@/.test(v)).join('\n')
-        .replace(/[\n\r\s　#]|[0-9]+[@\$&]/g,'').split('').forEach(v=>{
+    str.split('').forEach(v=>{
         if(dict_keys.indexOf(v) === -1 && ar.indexOf(v) === -1) ar.push(v);
     });
     if(ar.length) {
@@ -348,6 +348,33 @@ ${g_mapText}
 `);
     yaju1919.addInputText(h_output,{
         value: window.Bookmarklet.writeMapData(ar.map(v=>v+"#END").join('\n\n'))[1],
+        textarea: true,
+        readonly: true
+    });
+}
+$("<h1>",{text:"スプライトセットメーカー"}).appendTo(h);
+$("<div>",{text:"入力された文字列をスプライトセット化"}).appendTo(h);
+var input_str2 = yaju1919.addInputText(h,{
+    textarea: true,
+    title: "文字列入力欄",
+    save: "input_str2",
+});
+$("<button>").appendTo(h).text("スプライトセット作成").on("click",main3).css({
+    color:"yellow",
+    backgroundColor:"blue",
+    fontSize: "2em",
+});
+function main3(){
+    var str = input_str2(),
+        dict_keys = Object.keys(dict);
+    if(judge(str.replace(/ \n/g,''),dict_keys)) return;
+    var result = str.split('\n').map(function(line){
+        return str.split('').map(function(c){
+            return c === ' ' ? '45' : dict[c];
+        }).join(' ');
+    }).join('\n');
+    yaju1919.addInputText(h_output,{
+        value: result,
         textarea: true,
         readonly: true
     });
