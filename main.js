@@ -95,6 +95,7 @@ c-en@[ミリ秒] ... Alphabetの文字間の遅延時間を[ミリ秒]に設定�
 c-num@[ミリ秒] ... 数字の文字間の遅延時間を[ミリ秒]に設定する。
 ruby@[ 1 or 0 ] ... 1(true)だと、ルビを示す()内では遅延時間を0にする。
 split@ ... 現在の位置でイベントを分割する
+
 #EPOINT ... RPGENの命令を挿入する
 #END ... #EPOINTの終端
 
@@ -155,7 +156,7 @@ function main(){
         dict_keys = Object.keys(dict);
     if(judge(str.split('\n').filter(v=>!/^[a-zA-Z\-]+@/.test(v)).join('\n')
              .replace(/[\n\r\s　#]|[0-9]+[@\$&]/g,'')
-             .replace(/#EPOINT(.|\n)*?#END/,'')
+             .replace(/#EPOINT(.|\n)*?#END/g,'')
              ,dict_keys)) return;
     g_lines = str.split("\n");
     for(g_linesY = 0; g_linesY < g_lines.length; g_linesY++){
