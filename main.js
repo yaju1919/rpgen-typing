@@ -94,6 +94,9 @@ n@[ミリ秒] ... 改行間の遅延時間を[ミリ秒]に設定する。
 c-en@[ミリ秒] ... Alphabetの文字間の遅延時間を[ミリ秒]に設定する。
 c-num@[ミリ秒] ... 数字の文字間の遅延時間を[ミリ秒]に設定する。
 ruby@[ 1 or 0 ] ... 1(true)だと、ルビを示す()内では遅延時間を0にする。
+split@ ... 現在の位置でイベントを分割する
+#EPOINT ... RPGENの命令を挿入する
+#END ... #EPOINTの終端
 
 
 
@@ -122,7 +125,7 @@ function addWait(n){
 t:${Math.floor(n)},
 #ED`;
 }
-var g_mapText, g_nowX, g_nowY,
+var g_mapText, g_mapTexts, g_nowX, g_nowY,
     g_wait_c, g_wait_n,
     g_wait_c_en, g_wait_c_num,
     g_ruby, g_rubying,
@@ -130,6 +133,8 @@ var g_mapText, g_nowX, g_nowY,
     g_floor_ar;
 const startX = 33,
       startY = 33;
+let reStartX,
+    reStartY;
 function init(){
     g_floor_ar = []
     g_mapText = '';
@@ -138,17 +143,23 @@ function init(){
     g_wait_c = g_wait_n = g_wait_c_en = g_wait_c_num = 0;
     g_ruby = g_rubying = false;
     h_output.empty();
+    g_mapTexts = [];
+    reStartX = g_nowX;
+    reStartY = g_nowY;
 }
 function main(){
     init();
     var str = input_str(),
         dict_keys = Object.keys(dict);
     if(judge(str.split('\n').filter(v=>!/^[a-zA-Z\-]+@/.test(v)).join('\n')
-             .replace(/[\n\r\s　#]|[0-9]+[@\$&]/g,''),dict_keys)) return;
+             .replace(/[\n\r\s　#]|[0-9]+[@\$&]/g,'')
+             .replace(/(?<=#EPOINT)(.|\n)*?(?=#END)/,'')
+             ,dict_keys)) return;
     g_lines = str.split("\n");
     for(g_linesY = 0; g_linesY < g_lines.length; g_linesY++){
         g_line = g_lines[g_linesY];
-        if(cmdDuet()) continue;
+        if(cmdEpoint()) continue;
+        else if(cmdDuet()) continue;
         else if(analysisCmd()) continue;
         else if(main2()) {
             g_nowY++;
@@ -251,6 +262,15 @@ function analysisCmd(){
         case 'ruby':
             g_ruby = n !== 0;
             break;
+        case 'split':
+            g_mapTexts.push([
+                [reStartX, reStartY],
+                g_mapText
+            ]);
+            reStartX = g_nowX;
+            reStartY = g_nowY;
+            g_mapText = '';
+            break;
         default:
             addErrorMsg("該当のコマンドは存在しません。");
             addErrorMsg("普通の文字として扱うなら前に\\を追加してエスケープしてください。");
@@ -260,39 +280,51 @@ function analysisCmd(){
     return true;
 }
 function cmdDuet(){
-    if(/[0-9]+&/.test(g_line)){
-        var n = Number(g_line.match(/[0-9]+/)[0]);
-        if(n < 2 || n > 6) {
-            addErrorMsg("[n]重奏コマンドの[n]は2~6の範囲で指定してください。");
-            addErrorMsg(g_line);
-            return true;
-        }
-        var ar = yaju1919.makeArray(n).map(i=>g_lines[g_linesY+i+1]);
-        var max = yaju1919.max(ar.map(v=>v.length));
-        yaju1919.makeArray(max).map(i=>yaju1919.makeArray(n).map(v=>ar[v][i])).forEach((v,x)=>{
-            if(x) addWait(g_wait_c);
-            g_mapText += `
+    if(!/[0-9]+&/.test(g_line)) return false;
+    var n = Number(g_line.match(/[0-9]+/)[0]);
+    if(n < 2 || n > 6) {
+        addErrorMsg("[n]重奏コマンドの[n]は2~6の範囲で指定してください。");
+        addErrorMsg(g_line);
+        return true;
+    }
+    var ar = yaju1919.makeArray(n).map(i=>g_lines[g_linesY+i+1]);
+    var max = yaju1919.max(ar.map(v=>v.length));
+    yaju1919.makeArray(max).map(i=>yaju1919.makeArray(n).map(v=>ar[v][i])).forEach((v,x)=>{
+        if(x) addWait(g_wait_c);
+        g_mapText += `
 #MV_PA
 tx:${g_nowX+x},ty:${g_nowY},t:0,n:1,s:1,
 #ED`;
-            v.forEach((c,y)=>{
-                if(!c) return;
-                var id = dict[c];
-                if(!id) return;
-                g_mapText += `
+        v.forEach((c,y)=>{
+            if(!c) return;
+            var id = dict[c];
+            if(!id) return;
+            g_mapText += `
 #CH_SP
 n:${id},tx:${g_nowX+x},ty:${g_nowY+y},l:0,
 #ED`;
-                if(g_floor_ar.indexOf(id) === -1) g_floor_ar.push(id);
-            });
+            if(g_floor_ar.indexOf(id) === -1) g_floor_ar.push(id);
         });
-        addWait(g_wait_n);
-        g_linesY += n;
-        g_nowY += n;
-        g_nowX = startX;
+    });
+    addWait(g_wait_n);
+    g_linesY += n;
+    g_nowY += n;
+    g_nowX = startX;
+    return true;
+}
+function cmdEpoint(){
+    if("#EPOINT" !== g_line) return false;
+    let y;
+    for(y = g_linesY; y < g_lines.length; y++){
+        if("#END" === g_lines[g_linesY]) break;
+    }
+    if(y === g_lines.length) {
+        addErrorMsg(g_linesY + "行目の#EPOINTに対する#ENDがありません");
         return true;
     }
-    return false;
+    g_mapText += g_lines.slice(g_linesY + 1, y - 1).join('\n');
+    g_linesY = y;
+    return true;
 }
 //----------------------------------------------------------------------
 function outputBookmarklet(){
@@ -300,7 +332,20 @@ function outputBookmarklet(){
     ar.push("#HERO\n0,15");
     ar.push("#BGM\n");
     ar.push("#BGIMG\nhttps://i.imgur.com/TCdBukE.png");
-    ar.push("#FLOOR\n" + g_floor_ar.join(' ') + '\n'.repeat(15) + "45C\n" +　'\n'.repeat(g_nowY - startY + 62) + "45");
+    g_mapTexts.push([
+        [reStartX, reStartY],
+        g_mapText
+    ]);
+    let floor = (g_floor_ar.join(' ') + '\n'.repeat(15) + "45C\n" +　'\n'.repeat(g_nowY - startY + 62) + "45").split('\n');
+    g_mapTexts.forEach(v=>{
+        const xy = v[0],
+              x = xy[0],
+              y = xy[1];
+        let line = floor[y].split(' ');
+        if(line.length < x) line = line.concat(new Array(x - line.length).fill(' '));
+        line[x] = "45C";
+    });
+    ar.push("#FLOOR\n" + floor.join('\n'));
     for(let i = 0; i < 20; i++){
         var scale = (i + 1) * 5 - 1;
         var y = startY + scale;
@@ -341,12 +386,15 @@ p:0,x:${startX},y:${startY},
 #ED
 #PHEND0
 `);
-    ar.push(`
-#EPOINT tx:${startX},ty:${startY},
+    g_mapTexts.forEach(v=>{
+        const xy = v[0];
+        ar.push(`
+#EPOINT tx:${xy[0]},ty:${xy[1]},
 #PH0 tm:1,
-${g_mapText}
+${v[1]}
 #PHEND0
 `);
+    });
     yaju1919.addInputText(h_output,{
         value: window.Bookmarklet.writeMapData(ar.map(v=>v+"#END").join('\n\n'))[1],
         textarea: true,
