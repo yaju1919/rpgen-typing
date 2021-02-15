@@ -130,7 +130,8 @@ var g_mapText, g_mapTexts, g_nowX, g_nowY,
     g_wait_c_en, g_wait_c_num,
     g_ruby, g_rubying,
     g_lines, g_linesY, g_line,
-    g_floor_ar;
+    g_floor_ar,
+    g_epoints;
 const startX = 33,
       startY = 33;
 let reStartX,
@@ -146,6 +147,7 @@ function init(){
     g_mapTexts = [];
     reStartX = g_nowX;
     reStartY = g_nowY;
+    g_epoints = [];
 }
 function main(){
     init();
@@ -313,7 +315,8 @@ n:${id},tx:${g_nowX+x},ty:${g_nowY+y},l:0,
     return true;
 }
 function cmdEpoint(){
-    if("#EPOINT" !== g_line) return false;
+    if(!/^#EPOINT/.test(g_line)) return false;
+    const outSideFlag = /^#EPOINT tx:[0-9]+,ty:[0-9]+,/.test(g_line);
     let y;
     for(y = g_linesY; y < g_lines.length; y++){
         if("#END" === g_lines[g_linesY]) break;
@@ -322,7 +325,8 @@ function cmdEpoint(){
         addErrorMsg(g_linesY + "行目の#EPOINTに対する#ENDがありません");
         return true;
     }
-    g_mapText += g_lines.slice(g_linesY + 1, y - 1).join('\n');
+    if(outSideFlag) g_epoints.push(g_lines.slice(g_linesY, y - 1).join('\n'));
+    else g_mapText += g_lines.slice(g_linesY + 1, y - 1).join('\n');
     g_linesY = y;
     return true;
 }
@@ -353,6 +357,7 @@ function outputBookmarklet(){
         ar.push(`#SPOINT
 ${startX},${y},0,${scale + 1}`);
     }
+    g_epoints.forEach(v=>ar.push(v + '\n'));
     ar.push(`
 #EPOINT tx:0,ty:15,
 #PH0 tm:1,
