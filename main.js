@@ -220,7 +220,7 @@ s:${n},
 tx:${realX},ty:${realY},t:0,n:1,s:1,
 #ED
 #CH_SP
-n:${id},tx:${g_nowX},ty:${g_nowY},l:0,
+n:${id},tx:${g_nowX},ty:${g_nowY},l:1,
 #ED`;
         g_nowX++;
         if(g_floor_ar.indexOf(id) === -1) g_floor_ar.push(id);
@@ -305,7 +305,7 @@ tx:${realX},ty:${realY},t:0,n:1,s:1,
             if(!id) return;
             g_mapText += `
 #CH_SP
-n:${id},tx:${g_nowX+x},ty:${g_nowY+y},l:0,
+n:${id},tx:${g_nowX+x},ty:${g_nowY+y},l:1,
 #ED`;
             if(g_floor_ar.indexOf(id) === -1) g_floor_ar.push(id);
         });
@@ -342,17 +342,7 @@ function outputBookmarklet(){
         [prevRealX, prevRealY],
         g_mapText
     ]);
-    let floor = (g_floor_ar.join(' ') + '\n'.repeat(15) + "45C\n" +　'\n'.repeat(g_nowY - startY + 62) + "45").split('\n');
-    g_mapTexts.forEach(v=>{
-        const xy = v[0],
-              x = xy[0],
-              y = xy[1];
-        let line = floor[y].split(' ');
-        if(line.length < x) line = line.concat(new Array(x - line.length).fill(''));
-        line[x] = "45C";
-        floor[y] = line.join(' ');
-    });
-    ar.push("#FLOOR\n" + floor.join('\n'));
+    ar.push("#FLOOR\n" + g_floor_ar.join(' ') + '\n'.repeat(15) + "45C\n" +　'\n'.repeat(g_nowY - startY + 62) + "45");
     for(let i = 0; i < 20; i++){
         var scale = (i + 1) * 5 - 1;
         var y = startY + scale;
