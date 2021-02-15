@@ -348,7 +348,7 @@ function outputBookmarklet(){
               x = xy[0],
               y = xy[1];
         let line = floor[y].split(' ');
-        if(line.length < x) line = line.concat(new Array(x - line.length).fill(' '));
+        if(line.length < x) line = line.concat(new Array(x - line.length).fill(''));
         line[x] = "45C";
         floor[y] = line.join(' ');
     });
