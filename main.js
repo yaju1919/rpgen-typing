@@ -155,7 +155,7 @@ function main(){
         dict_keys = Object.keys(dict);
     if(judge(str.split('\n').filter(v=>!/^[a-zA-Z\-]+@/.test(v)).join('\n')
              .replace(/[\n\r\s　#]|[0-9]+[@\$&]/g,'')
-             .replace(/(?<=#EPOINT)(.|\n)*?(?=#END)/,'')
+             .replace(/#EPOINT(.|\n)*?#END/,'')
              ,dict_keys)) return;
     g_lines = str.split("\n");
     for(g_linesY = 0; g_linesY < g_lines.length; g_linesY++){
