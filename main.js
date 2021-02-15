@@ -326,8 +326,8 @@ function cmdEpoint(){
         addErrorMsg(g_linesY + "行目の#EPOINTに対する#ENDがありません");
         return true;
     }
-    if(outSideFlag) g_epoints.push(g_lines.slice(g_linesY, y - 1).join('\n'));
-    else g_mapText += g_lines.slice(g_linesY + 1, y - 1).join('\n');
+    if(outSideFlag) g_epoints.push(g_lines.slice(g_linesY, y).join('\n'));
+    else g_mapText += '\n' + g_lines.slice(g_linesY + 1, y).join('\n');
     g_linesY = y;
     return true;
 }
