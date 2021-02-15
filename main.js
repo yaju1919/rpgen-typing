@@ -155,8 +155,8 @@ function main(){
     var str = input_str(),
         dict_keys = Object.keys(dict);
     if(judge(str.split('\n').filter(v=>!/^[a-zA-Z\-]+@/.test(v)).join('\n')
-             .replace(/[\n\r\s　#]|[0-9]+[@\$&]/g,'')
              .replace(/#EPOINT(.|\n)*?#END/g,'')
+             .replace(/[\n\r\s　#]|[0-9]+[@\$&]/g,'')
              ,dict_keys)) return;
     g_lines = str.split("\n");
     for(g_linesY = 0; g_linesY < g_lines.length; g_linesY++){
