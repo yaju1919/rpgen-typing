@@ -320,7 +320,7 @@ function cmdEpoint(){
     const outSideFlag = /^#EPOINT tx:[0-9]+,ty:[0-9]+,/.test(g_line);
     let y;
     for(y = g_linesY; y < g_lines.length; y++){
-        if("#END" === g_lines[g_linesY]) break;
+        if("#END" === g_lines[y]) break;
     }
     if(y === g_lines.length) {
         addErrorMsg(g_linesY + "行目の#EPOINTに対する#ENDがありません");
