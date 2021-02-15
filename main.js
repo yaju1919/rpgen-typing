@@ -135,19 +135,16 @@ var g_mapText, g_mapTexts, g_nowX, g_nowY,
     g_epoints;
 const startX = 33,
       startY = 33;
-let reStartX,
-    reStartY;
+let realX, realY, prevRealX, prevRealY;
 function init(){
     g_floor_ar = []
     g_mapText = '';
-    g_nowX = startX;
-    g_nowY = startY;
+    prevRealX = realX = g_nowX = startX;
+    prevRealY = realY = g_nowY = startY;
     g_wait_c = g_wait_n = g_wait_c_en = g_wait_c_num = 0;
     g_ruby = g_rubying = false;
     h_output.empty();
     g_mapTexts = [];
-    reStartX = g_nowX;
-    reStartY = g_nowY;
     g_epoints = [];
 }
 function main(){
@@ -216,9 +213,11 @@ s:${n},
             g_nowX++;
             continue;
         }
+        realX = g_nowX;
+        realY = g_nowY;
         g_mapText += `
 #MV_PA
-tx:${g_nowX},ty:${g_nowY},t:0,n:1,s:1,
+tx:${realX},ty:${realY},t:0,n:1,s:1,
 #ED
 #CH_SP
 n:${id},tx:${g_nowX},ty:${g_nowY},l:0,
@@ -267,11 +266,11 @@ function analysisCmd(){
             break;
         case 'split':
             g_mapTexts.push([
-                [reStartX, reStartY],
+                [prevRealX, prevRealY],
                 g_mapText
             ]);
-            reStartX = g_nowX;
-            reStartY = g_nowY;
+            prevRealX = realX;
+            prevRealY = realY;
             g_mapText = '';
             break;
         default:
@@ -294,9 +293,11 @@ function cmdDuet(){
     var max = yaju1919.max(ar.map(v=>v.length));
     yaju1919.makeArray(max).map(i=>yaju1919.makeArray(n).map(v=>ar[v][i])).forEach((v,x)=>{
         if(x) addWait(g_wait_c);
+        realX = g_nowX + x;
+        realY = g_nowY;
         g_mapText += `
 #MV_PA
-tx:${g_nowX+x},ty:${g_nowY},t:0,n:1,s:1,
+tx:${realX},ty:${realY},t:0,n:1,s:1,
 #ED`;
         v.forEach((c,y)=>{
             if(!c) return;
@@ -338,7 +339,7 @@ function outputBookmarklet(){
     ar.push("#BGM\n");
     ar.push("#BGIMG\nhttps://i.imgur.com/TCdBukE.png");
     g_mapTexts.push([
-        [reStartX, reStartY],
+        [prevRealX, prevRealY],
         g_mapText
     ]);
     let floor = (g_floor_ar.join(' ') + '\n'.repeat(15) + "45C\n" +　'\n'.repeat(g_nowY - startY + 62) + "45").split('\n');
@@ -349,6 +350,7 @@ function outputBookmarklet(){
         let line = floor[y].split(' ');
         if(line.length < x) line = line.concat(new Array(x - line.length).fill(' '));
         line[x] = "45C";
+        floor[y] = line.join(' ');
     });
     ar.push("#FLOOR\n" + floor.join('\n'));
     for(let i = 0; i < 20; i++){
