@@ -410,7 +410,7 @@ p:0,x:${startX},y:${startY},
         ar.push(`#SPOINT
 ${startX},${y},0,${scale + 1}`);
     }
-    epointArr.forEach(v=>ar.push(v + '\n'));
+    epointArr.forEach(v=>ar.push(v));
     yaju1919.addInputText(h_output,{
         value: window.Bookmarklet.writeMapData(ar.map(v=>v+"#END").join('\n\n'))[1],
         textarea: true,
