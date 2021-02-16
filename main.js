@@ -398,9 +398,8 @@ p:0,x:${startX},y:${startY},
         g_mapText
     ]);
     let floor = (g_floor_ar.join(' ') + '\n'.repeat(15) + "45C\n" +　'\n'.repeat(g_nowY - startY + 62) + "45").split('\n');
-    epointXYs.forEach(v=>{
-        const xy = v[0],
-              x = xy[0],
+    epointXYs.forEach(xy=>{
+        const x = xy[0],
               y = xy[1];
         let line = floor[y].split(' ');
         if(line.length < x) line = line.concat(new Array(x - line.length).fill(''));
