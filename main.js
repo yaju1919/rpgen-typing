@@ -335,17 +335,18 @@ function cmdEpoint(){
 }
 //----------------------------------------------------------------------
 function outputBookmarklet(){
+    g_mapTexts.unshift([
+        [prevRealX, prevRealY],
+        g_mapText
+    ]);
     g_mapTexts.forEach(v=>{
         const xy = v[0];
-        g_epoints.unshift(`
-#EPOINT tx:${xy[0]},ty:${xy[1]},
+        g_epoints.unshift(`#EPOINT tx:${xy[0]},ty:${xy[1]},
 #PH0 tm:1,
 ${v[1]}
-#PHEND0
-`);
+#PHEND0`);
     });
-    g_epoints.push(`
-#EPOINT tx:0,ty:15,
+    g_epoints.push(`#EPOINT tx:0,ty:15,
 #PH0 tm:1,
 #CH_HM
 n:A1469,i:0,
@@ -375,8 +376,7 @@ t:500,
 #CH_PH
 p:0,x:${startX},y:${startY},
 #ED
-#PHEND0
-`);
+#PHEND0`);
     const [epointArr, epointXYs] = (()=>{
         const obj = {}, ar = [], XYs = [];
         g_epoints.forEach(v=>{
@@ -393,11 +393,7 @@ p:0,x:${startX},y:${startY},
     ar.push("#HERO\n0,15");
     ar.push("#BGM\n");
     ar.push("#BGIMG\nhttps://i.imgur.com/TCdBukE.png");
-    g_mapTexts.push([
-        [prevRealX, prevRealY],
-        g_mapText
-    ]);
-    let floor = (g_floor_ar.join(' ') + '\n'.repeat(15) + "45C\n" +　'\n'.repeat(g_nowY - startY + 62) + "45").split('\n');
+    let floor = (g_floor_ar.join(' ') +　'\n'.repeat(g_nowY - startY + 78) + "45").split('\n');
     epointXYs.forEach(xy=>{
         const x = xy[0],
               y = xy[1];
