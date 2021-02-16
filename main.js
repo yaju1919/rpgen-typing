@@ -39,6 +39,7 @@ yaju1919.addSelect(h,{
         "_": "syachi",
         "螟冗ｶｾ逶ｮ": "cecilia",
         "ヤマイダレ": "yamaidare",
+        "かるみあどーるず": "kalmiaDolls",
         "XXさないでください": "XX",
         "ケツとオチンポがかゆいのです": "kayui",
         "初音ミクの消失": "shoshitsu",
@@ -334,24 +335,16 @@ function cmdEpoint(){
 }
 //----------------------------------------------------------------------
 function outputBookmarklet(){
-    var ar = [];
-    ar.push("#HERO\n0,15");
-    ar.push("#BGM\n");
-    ar.push("#BGIMG\nhttps://i.imgur.com/TCdBukE.png");
-    g_mapTexts.push([
-        [prevRealX, prevRealY],
-        g_mapText
-    ]);
-    ar.push("#FLOOR\n" + g_floor_ar.join(' ') + '\n'.repeat(15) + "45C\n" +　'\n'.repeat(g_nowY - startY + 62) + "45");
-    for(let i = 0; i < 20; i++){
-        var scale = (i + 1) * 5 - 1;
-        var y = startY + scale;
-        if(y > g_nowY) break;
-        ar.push(`#SPOINT
-${startX},${y},0,${scale + 1}`);
-    }
-    g_epoints.forEach(v=>ar.push(v + '\n'));
-    ar.push(`
+    g_mapTexts.forEach(v=>{
+        const xy = v[0];
+        g_epoints.unshift(`
+#EPOINT tx:${xy[0]},ty:${xy[1]},
+#PH0 tm:1,
+${v[1]}
+#PHEND0
+`);
+    });
+    g_epoints.push(`
 #EPOINT tx:0,ty:15,
 #PH0 tm:1,
 #CH_HM
@@ -384,15 +377,45 @@ p:0,x:${startX},y:${startY},
 #ED
 #PHEND0
 `);
-    g_mapTexts.forEach(v=>{
-        const xy = v[0];
-        ar.push(`
-#EPOINT tx:${xy[0]},ty:${xy[1]},
-#PH0 tm:1,
-${v[1]}
-#PHEND0
-`);
+    const [epointArr, epointXYs] = (()=>{
+        const obj = {}, ar = [], XYs = [];
+        g_epoints.forEach(v=>{
+            const xy = v.match(/tx:[0-9]+,ty:[0-9]+,/)[0].match(/[0-9]+/g),
+                  k = xy.join(',');
+            if(obj[k]) return addErrorMsg(`座標(${k})のイベントが二重に設置されています。`);
+            obj[k] = true;
+            ar.push(v + '\n');
+            XYs.push(xy);
+        });
+        return [ar, XYs];
+    })();
+    var ar = [];
+    ar.push("#HERO\n0,15");
+    ar.push("#BGM\n");
+    ar.push("#BGIMG\nhttps://i.imgur.com/TCdBukE.png");
+    g_mapTexts.push([
+        [prevRealX, prevRealY],
+        g_mapText
+    ]);
+    let floor = (g_floor_ar.join(' ') + '\n'.repeat(15) + "45C\n" +　'\n'.repeat(g_nowY - startY + 62) + "45").split('\n');
+    epointXYs.forEach(v=>{
+        const xy = v[0],
+              x = xy[0],
+              y = xy[1];
+        let line = floor[y].split(' ');
+        if(line.length < x) line = line.concat(new Array(x - line.length).fill(''));
+        line[x] = "45C";
+        floor[y] = line.join(' ');
     });
+    ar.push("#FLOOR\n" + floor.join('\n'));
+    for(let i = 0; i < 20; i++){
+        var scale = (i + 1) * 5 - 1;
+        var y = startY + scale;
+        if(y > g_nowY) break;
+        ar.push(`#SPOINT
+${startX},${y},0,${scale + 1}`);
+    }
+    epointArr.forEach(v=>ar.push(v + '\n'));
     yaju1919.addInputText(h_output,{
         value: window.Bookmarklet.writeMapData(ar.map(v=>v+"#END").join('\n\n'))[1],
         textarea: true,
