@@ -33,7 +33,7 @@ split@
 n@800
 #EPOINT
 #MV_CA
-tx:40,ty:48,t:500,s:1,tw:11,
+tx:39,ty:48,t:500,s:1,tw:11,
 #ED
 #CM_EV
 m:left,
@@ -275,7 +275,7 @@ p:0,x:4,y:4,
 #EPOINT tx:0,ty:15,
 #PH0 tm:1,
 #MV_CA
-tx:40,ty:37,t:0,s:1,
+tx:39,ty:37,t:0,s:1,
 #ED
 #MV_PA
 tx:0,ty:17,t:0,n:1,s:1,
